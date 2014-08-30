@@ -1,0 +1,8 @@
+cscope.out
+
+*.o
+rivai
+test_runner
+
+*.swp
+*.swo
