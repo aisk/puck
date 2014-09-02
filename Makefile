@@ -1,12 +1,12 @@
 
-SRC = $(wildcard src/*.c)
-OBJ = ${SRC:.c=.o}
+SRC = $(wildcard src/*.cc)
+OBJ = ${SRC:.cc=.o}
 
-CC = clang
+CC = clang++
 CFLAGS = -Wall
 
-TEST_SRC = $(shell find {tests,src}/*.c | sed '/rivai/d')
-TEST_OBJ = ${TEST_SRC:.c=.o}
+TEST_SRC = $(shell find {tests,src}/*.cc | sed '/rivai/d')
+TEST_OBJ = ${TEST_SRC:.cc=.o}
 
 rivai: $(OBJ)
 	$(CC) $^ $(LDFLAGS) -g -o $@
