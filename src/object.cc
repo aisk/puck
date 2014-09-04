@@ -4,6 +4,14 @@
 #include <assert.h>
 #include "object.h"
 
+char *rv::object::Object::ToString() {
+    return "not implemented";
+}
+
+rv::object::type::type rv::object::Object::GetType() {
+    return this->type;
+}
+
 rv::object::Integer::Integer(long value) {
     this->type = rv::object::type::INTEGER;
     this->value = value;

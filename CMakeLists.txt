@@ -5,8 +5,8 @@ FILE(GLOB SOURCES "./src/[^main]*.cc")
 ADD_EXECUTABLE(rivai ${SOURCES} "./src/main.cc")
 
 FILE(GLOB TESTING_SOURCES "./tests/*.cc")
-ADD_EXECUTABLE(testing ${TESTING_SOURCES} ${SOURCES})
+ADD_EXECUTABLE(run_test ${TESTING_SOURCES} ${SOURCES})
 
 ENABLE_TESTING()
-ADD_TEST(test_object testing object)
-ADD_TEST(test_parser testing parser)
+ADD_TEST(test_object run_test object)
+ADD_TEST(test_parser run_test parser)

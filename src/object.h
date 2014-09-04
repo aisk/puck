@@ -25,8 +25,8 @@ namespace object {
     protected:
         type::type type;
     public:
-        type::type GetType();
-        // virtual char *ToString();
+        virtual type::type GetType();
+        virtual char *ToString();
     };
 
     class Number : public Object {
