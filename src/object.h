@@ -4,6 +4,88 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+namespace rv {
+namespace object {
+    namespace type {
+        enum type {
+            INTEGER,
+            REAL,
+            BOOL,
+            PAIR,
+            LIST,
+            SYMBOL,
+            CHAR,
+            STRING,
+            VECTOR,
+            NIL,
+            CFUNC,
+        };
+    }
+    class Object {
+    protected:
+        type::type type;
+    public:
+        type::type GetType();
+        // virtual char *ToString();
+    };
+
+    class Number : public Object {
+    };
+
+    class Integer : public Number {
+        long value;
+    public:
+        Integer(long);
+    };
+
+    class Real : public Number {
+        double value;
+    public:
+        Real(double);
+    };
+
+    class Bool : public Object {
+        bool value;
+    public:
+        Bool(bool);
+    };
+
+    class Pair : public Object {
+
+    };
+
+    class List : public Pair {
+
+    };
+
+    class Symbol : public Object {
+
+    };
+
+    class Char : public Object {
+
+    };
+
+    class String : public Object {
+
+    };
+
+    class Vector : public Object {
+
+    };
+
+    class Nil : public Object {
+
+    };
+
+    class Cfunc : public Object {
+
+    };
+
+
+} // namespace object
+} // namespace rv
+
 typedef enum {
     RV_TYPE_NUMBER = 0,
     RV_TYPE_INTEGER,

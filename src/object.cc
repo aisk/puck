@@ -4,6 +4,22 @@
 #include <assert.h>
 #include "object.h"
 
+rv::object::Integer::Integer(long value) {
+    this->type = rv::object::type::INTEGER;
+    this->value = value;
+}
+
+rv::object::Real::Real(double value) {
+    this->type = rv::object::type::REAL;
+    this->value = value;
+}
+
+rv::object::Bool::Bool(bool value) {
+    this->type = rv::object::type::BOOL;
+    this->value = value;
+}
+
+
 rv_obj* rv_integer_new(int v) {
     rv_obj* obj = (rv_obj*)malloc(sizeof(rv_obj));
     obj->t = RV_TYPE_INTEGER;
