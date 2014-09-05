@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
+
 #include "object.h"
 
-char *rv::object::Object::ToString() {
+const char* rv::object::Object::ToString() {
     return "not implemented";
 }
 
@@ -15,6 +17,12 @@ rv::object::type::type rv::object::Object::GetType() {
 rv::object::Integer::Integer(long value) {
     this->type = rv::object::type::INTEGER;
     this->value = value;
+}
+
+const char* rv::object::Integer::ToString() {
+    auto buffer = new char[12]();
+    snprintf(buffer, 12, "%ld", this->value);
+    return buffer;
 }
 
 rv::object::Real::Real(double value) {

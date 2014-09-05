@@ -26,7 +26,7 @@ namespace object {
         type::type type;
     public:
         virtual type::type GetType();
-        virtual char *ToString();
+        virtual const char *ToString();
     };
 
     class Number : public Object {
@@ -36,6 +36,7 @@ namespace object {
         long value;
     public:
         Integer(long);
+        const char *ToString();
     };
 
     class Real : public Number {

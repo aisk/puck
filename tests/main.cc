@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-int test_object();
-int test_parser();
+int TestObject();
+int TestParser();
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -12,9 +12,10 @@ int main(int argc, char *argv[]) {
     }
     char *testcase = argv[1];
     if (strcmp("object", testcase) == 0) {
-        return test_object();
+        return TestObject();
     } else if (strcmp("parser", testcase) == 0) {
-        return test_parser();
+        return TestParser();
     }
+    fprintf(stderr, "testcase not found\n");
     return 3;
 }

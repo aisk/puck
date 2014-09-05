@@ -5,7 +5,7 @@
 #include "env.h"
 #include "eval.h"
 
-static void debug(char* s) {
+static void debug(const char* s) {
     printf("[DEBUG] %s\n", s);
 }
 

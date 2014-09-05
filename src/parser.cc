@@ -5,6 +5,38 @@
 
 #include "assert.h"
 
+rv::Parser::Parser(const char *src) {
+    this->src = src;
+}
+
+bool rv::Parser::HaveMore() {
+    return this->pos < strlen(this->src);
+}
+
+void rv::Parser::Pop(size_t n=1) {
+    this->pos += n;
+}
+
+char rv::Parser::Peak(size_t idx=0) {
+    if (this->pos + idx < strlen(this->src)) {
+        return this->src[this->pos + idx];
+    } else {
+        return NULL;
+    }
+}
+
+void rv::Parser::SkipWhite() {
+    while (this->HaveMore()) {
+        if (this->Eat('\n')) {
+            this->line ++;
+        } else if (isspace(this->Peak())) {
+            this->Pop();
+        } else {
+            break;
+        }
+    }
+}
+
 static rv_obj* parse_expr(rv_parser* parser);
 
 rv_parser* rv_parser_new(char* src) {
@@ -14,6 +46,117 @@ rv_parser* rv_parser_new(char* src) {
     parser->pos = 0;
     parser->line = 1;
     return parser;
+}
+
+bool rv::Parser::Eat(char c) {
+    if (this->Peak() != c) {
+        return false;
+    } else {
+        this->pos ++;
+        return true;
+    }
+}
+
+void rv::Parser::SkipComment() {
+    while (this->Eat(';')) {
+        while (this->HaveMore() && !this->Eat('\n')) {
+            this->Pop();
+        }
+        this->line += 1;
+    }
+}
+
+void rv::Parser::SkipAll() {
+    while (true) {
+        this->SkipWhite();
+        if (this->Peak() == ';') {
+            this->SkipComment();
+        } else {
+            break;
+        }
+    }
+}
+
+rv::object::Object *rv::Parser::ParseExpr() {
+    this->SkipAll();
+    if (!this->HaveMore()) {
+        puts("Noting to parse.");
+        exit(1);
+    }
+    char c = this->Peak();
+    switch(c) {
+    case '#':
+        return this->ParseBool();
+    case '(':
+        return this->ParseList();
+    case '+':
+    case '-':
+        if (!isdigit(this->Peak())) {
+            break;
+        }
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+        return this->ParseNumber();
+    case '"':
+        return this->ParseString();
+    }
+    return this->ParseSymbol();
+}
+
+
+rv::object::Object *rv::Parser::ParseNumber() {
+    int sign = 1;
+    bool is_real = false;
+    if (this->Eat('-')) {
+        sign = -1;
+    } else if (this->Eat('+')) {
+        sign = 1;
+    }
+    size_t start_pos = this->pos;
+    while (isdigit(this->Peak())) {
+        this->Pop(1);
+    }
+    if (this->Eat('.')) {
+        is_real = true;
+    }
+    while (isdigit(this->Peak())) {
+        this->Pop();
+    }
+    size_t end_pos = this->pos;
+    if (start_pos == end_pos) {
+        puts("Not enough number to parse");
+    }
+    if (is_real) {
+        double value = atof(this->src + start_pos);
+        return new rv::object::Real(value);
+    } else {
+        long value = atoi(this->src + start_pos);
+        return new rv::object::Integer(value);
+    }
+}
+
+rv::object::Object *rv::Parser::ParseList() {
+    return NULL; // TODO
+}
+
+rv::object::Object *rv::Parser::ParseBool() {
+    return NULL; // TODO
+}
+
+rv::object::Object *rv::Parser::ParseString() {
+    return NULL; // TODO
+}
+
+rv::object::Object *rv::Parser::ParseSymbol() {
+    return NULL; // TODO
 }
 
 static bool have_more(rv_parser* parser) {

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "../src/object.h"
 
-int test_object() {
+int TestObject() {
     auto integer = new rv::object::Integer(1);
-    integer->ToString();
+    puts(integer->ToString());
     integer->GetType();
     return 0;
 }
