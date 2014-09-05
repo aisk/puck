@@ -3,7 +3,6 @@
 
 int TestObject() {
     auto integer = new rv::object::Integer(1);
-    puts(integer->ToString());
     integer->GetType();
     return 0;
 }

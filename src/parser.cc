@@ -13,11 +13,11 @@ bool rv::Parser::HaveMore() {
     return this->pos < strlen(this->src);
 }
 
-void rv::Parser::Pop(size_t n=1) {
+void rv::Parser::Pop(size_t n) {
     this->pos += n;
 }
 
-char rv::Parser::Peak(size_t idx=0) {
+char rv::Parser::Peak(size_t idx) {
     if (this->pos + idx < strlen(this->src)) {
         return this->src[this->pos + idx];
     } else {
@@ -29,8 +29,8 @@ void rv::Parser::SkipWhite() {
     while (this->HaveMore()) {
         if (this->Eat('\n')) {
             this->line ++;
-        } else if (isspace(this->Peak())) {
-            this->Pop();
+        } else if (isspace(this->Peak(0))) {
+            this->Pop(1);
         } else {
             break;
         }
@@ -49,7 +49,7 @@ rv_parser* rv_parser_new(char* src) {
 }
 
 bool rv::Parser::Eat(char c) {
-    if (this->Peak() != c) {
+    if (this->Peak(0) != c) {
         return false;
     } else {
         this->pos ++;
@@ -60,7 +60,7 @@ bool rv::Parser::Eat(char c) {
 void rv::Parser::SkipComment() {
     while (this->Eat(';')) {
         while (this->HaveMore() && !this->Eat('\n')) {
-            this->Pop();
+            this->Pop(1);
         }
         this->line += 1;
     }
@@ -69,7 +69,7 @@ void rv::Parser::SkipComment() {
 void rv::Parser::SkipAll() {
     while (true) {
         this->SkipWhite();
-        if (this->Peak() == ';') {
+        if (this->Peak(0) == ';') {
             this->SkipComment();
         } else {
             break;
@@ -80,10 +80,10 @@ void rv::Parser::SkipAll() {
 rv::object::Object *rv::Parser::ParseExpr() {
     this->SkipAll();
     if (!this->HaveMore()) {
-        puts("Noting to parse.");
+        fprintf(stderr, "Noting to parse.");
         exit(1);
     }
-    char c = this->Peak();
+    char c = this->Peak(0);
     switch(c) {
     case '#':
         return this->ParseBool();
@@ -91,7 +91,7 @@ rv::object::Object *rv::Parser::ParseExpr() {
         return this->ParseList();
     case '+':
     case '-':
-        if (!isdigit(this->Peak())) {
+        if (!isdigit(this->Peak(1))) {
             break;
         }
     case '0':
@@ -121,14 +121,14 @@ rv::object::Object *rv::Parser::ParseNumber() {
         sign = 1;
     }
     size_t start_pos = this->pos;
-    while (isdigit(this->Peak())) {
+    while (isdigit(this->Peak(0))) {
         this->Pop(1);
     }
     if (this->Eat('.')) {
         is_real = true;
     }
-    while (isdigit(this->Peak())) {
-        this->Pop();
+    while (isdigit(this->Peak(0))) {
+        this->Pop(1);
     }
     size_t end_pos = this->pos;
     if (start_pos == end_pos) {
@@ -136,9 +136,11 @@ rv::object::Object *rv::Parser::ParseNumber() {
     }
     if (is_real) {
         double value = atof(this->src + start_pos);
+        value *= sign;
         return new rv::object::Real(value);
     } else {
         long value = atoi(this->src + start_pos);
+        value *= sign;
         return new rv::object::Integer(value);
     }
 }

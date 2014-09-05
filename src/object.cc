@@ -20,6 +20,7 @@ rv::object::Integer::Integer(long value) {
 }
 
 const char* rv::object::Integer::ToString() {
+    printf("%ld\n", this->value);
     auto buffer = new char[12]();
     snprintf(buffer, 12, "%ld", this->value);
     return buffer;
