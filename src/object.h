@@ -75,7 +75,11 @@ namespace object {
     };
 
     class String : public Object {
-
+        char *value;
+    public:
+        String(char *);
+        char *GetValue() { return this->value; };
+        const char *ToString();
     };
 
     class Vector : public Object {

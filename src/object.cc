@@ -37,6 +37,15 @@ bool object::Object::EqualTo(Object *that) {
         auto thatBool = static_cast<object::Bool *>(that);
         return thisBool->GetValue() == thatBool->GetValue();
     }
+    case object::type::STRING: {
+        auto thisString = static_cast<object::String *>(this);
+        auto thatString = static_cast<object::String *>(that);
+        if (strcmp(thisString->GetValue(), thatString->GetValue()) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     default: {
         fprintf(stderr, "Not implemented!\n");
         return false;
@@ -47,7 +56,6 @@ bool object::Object::EqualTo(Object *that) {
 object::Integer::Integer(long value) {
     this->type = object::type::INTEGER;
     this->value = value;
-    // std::cout << value << std::endl;
 }
 
 const char* object::Integer::ToString() {
@@ -78,6 +86,18 @@ const char *object::Bool::ToString() {
     } else {
         return new char[3]{'#', 'f', 0};
     }
+}
+
+object::String::String(char *value) {
+    this->type = object::type::STRING;
+    this->value = value;
+}
+
+const char* object::String::ToString() {
+    size_t length = strlen(this->value) + 3;
+    auto buffer = new char[length]();
+    snprintf(buffer, length, "\"%s\"", this->value);
+    return buffer;
 }
 
 rv_obj* rv_integer_new(int v) {

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "../src/object.h"
 
 using namespace rv;
@@ -26,6 +27,34 @@ int TestReal() {
     return 0;
 }
 
+int TestBool() {
+    object::Object *True = new object::Bool(true);
+    if (True->GetType() != object::type::BOOL) {
+        return 1;
+    }
+    if (strcmp(True->ToString(), "#t") != 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int TestString() {
+    char *str = const_cast<char *>("hello world!");
+    object::Object *obj = new object::String(str);
+    if (obj->GetType() != object::type::STRING) {
+        return 1;
+    }
+    if (strcmp(obj->ToString(), "\"hello world!\"") != 0) {
+        return 1;
+    }
+    return 0;
+}
+
 int TestObject() {
-    return TestInteger() + TestReal();
+    int r = 0;
+    r += TestInteger();
+    r += TestReal();
+    r += TestBool();
+    r += TestString();
+    return r;
 }

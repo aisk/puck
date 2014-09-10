@@ -154,7 +154,25 @@ rv::object::Object *rv::Parser::ParseBool() {
 }
 
 rv::object::Object *rv::Parser::ParseString() {
-    return NULL; // TODO
+    this->Eat('"');
+    size_t start_pos;
+    size_t n = 0;
+    start_pos = this->pos;
+    while (true) {
+        if (!this->HaveMore())
+            break;
+        if (this->Peek(0) == '"')
+            break;
+        this->Pop(1);
+        n++;
+    }
+    if (!this->Eat('"')) {
+        puts("Expecting '\"' to end a string.");
+        exit(1);
+    }
+    char* s = (char*)malloc(sizeof(char) * (n + 1));
+    strncpy(s, (this->src + start_pos), n);
+    return new object::String(s);
 }
 
 rv::object::Object *rv::Parser::ParseSymbol() {
