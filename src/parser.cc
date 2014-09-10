@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ctype.h>
 #include <string.h>
 #include "parser.h"
@@ -17,11 +18,12 @@ void rv::Parser::Pop(size_t n) {
     this->pos += n;
 }
 
-char rv::Parser::Peak(size_t idx) {
+char rv::Parser::Peek(size_t idx) {
+    std::cout << this->pos << " " << idx << " " << this->src << std::endl;
     if (this->pos + idx < strlen(this->src)) {
         return this->src[this->pos + idx];
     } else {
-        return NULL;
+        return -1;
     }
 }
 
@@ -29,7 +31,7 @@ void rv::Parser::SkipWhite() {
     while (this->HaveMore()) {
         if (this->Eat('\n')) {
             this->line ++;
-        } else if (isspace(this->Peak(0))) {
+        } else if (isspace(this->Peek(0))) {
             this->Pop(1);
         } else {
             break;
@@ -49,7 +51,7 @@ rv_parser* rv_parser_new(char* src) {
 }
 
 bool rv::Parser::Eat(char c) {
-    if (this->Peak(0) != c) {
+    if (this->Peek(0) != c) {
         return false;
     } else {
         this->pos ++;
@@ -69,7 +71,7 @@ void rv::Parser::SkipComment() {
 void rv::Parser::SkipAll() {
     while (true) {
         this->SkipWhite();
-        if (this->Peak(0) == ';') {
+        if (this->Peek(0) == ';') {
             this->SkipComment();
         } else {
             break;
@@ -83,7 +85,7 @@ rv::object::Object *rv::Parser::ParseExpr() {
         fprintf(stderr, "Nothing to parse.\n");
         exit(1);
     }
-    char c = this->Peak(0);
+    char c = this->Peek(0);
     switch(c) {
     case '#':
         return this->ParseBool();
@@ -91,7 +93,7 @@ rv::object::Object *rv::Parser::ParseExpr() {
         return this->ParseList();
     case '+':
     case '-':
-        if (!isdigit(this->Peak(1))) {
+        if (!isdigit(this->Peek(1))) {
             break;
         }
     case '0':
@@ -121,13 +123,13 @@ rv::object::Object *rv::Parser::ParseNumber() {
         sign = 1;
     }
     size_t start_pos = this->pos;
-    while (isdigit(this->Peak(0))) {
+    while (isdigit(this->Peek(0))) {
         this->Pop(1);
     }
     if (this->Eat('.')) {
         is_real = true;
     }
-    while (isdigit(this->Peak(0))) {
+    while (isdigit(this->Peek(0))) {
         this->Pop(1);
     }
     size_t end_pos = this->pos;

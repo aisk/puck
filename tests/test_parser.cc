@@ -1,6 +1,7 @@
 #include <string.h>
 #include <memory>
 #include <stdio.h>
+#include <iostream>
 
 #include "../src/parser.h"
 
@@ -26,9 +27,11 @@ int TestParseInteger() {
 }
 
 int TestParseReal() {
-    char *src = const_cast<char *>("0.618");
+    // char *src = const_cast<char *>("0.618");
+    char *src = new char[6]{'0', '.', '6', '1', '8', 0};
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    std::cout << obj->ToString() << std::endl;
     if (!obj->EqualTo(new object::Real(0.618))) {
         return 1;
     }
@@ -38,7 +41,7 @@ int TestParseReal() {
 
 int TestParser() {
     int r = 0;
+    r += TestParseInteger();
     r += TestParseReal();
-    // r += TestParseInteger();
     return r;
 }

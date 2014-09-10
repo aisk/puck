@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include "../src/object.h"
 
-int TestObject() {
-    return 0;
-}
+using namespace rv;
 
 int TestInteger() {
     auto one = new rv::object::Integer(1);
@@ -18,4 +16,16 @@ int TestInteger() {
         return 1;
     }
     return 0;
+}
+
+int TestReal() {
+    object::Object *obj = new object::Real(0.618);
+    if (obj->GetType() != object::type::REAL) {
+        return 1;
+    }
+    return 0;
+}
+
+int TestObject() {
+    return TestInteger() + TestReal();
 }

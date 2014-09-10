@@ -8,6 +8,7 @@ namespace rv {
 namespace object {
     namespace type {
         enum type {
+            INVALID,
             INTEGER,
             REAL,
             BOOL,
@@ -39,7 +40,7 @@ namespace object {
         Integer(long);
         long GetValue() { return this->value; };
         const char *ToString();
-        bool EqualTo(Object*);
+        virtual bool EqualTo(Object*);
     };
 
     class Real : public Number {
@@ -48,7 +49,7 @@ namespace object {
         Real(double);
         double GetValue() { return this->value; };
         const char *ToString();
-        bool EqualTo(Object*);
+        virtual bool EqualTo(Object*);
     };
 
     class Bool : public Object {

@@ -13,7 +13,7 @@ class Parser {
     size_t line;
     bool HaveMore();
     void Pop(size_t);
-    char Peak(size_t);
+    char Peek(size_t);
     bool Eat(char);
     void SkipWhite();
     void SkipComment();
