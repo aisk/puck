@@ -17,8 +17,31 @@ object::type::type object::Object::GetType() {
 }
 
 bool object::Object::EqualTo(Object *that) {
-    fprintf(stderr, "You don't overide the Object::EuqalTo method!\n");
-    return false;
+    if (this->GetType() != that->GetType()) {
+        return false;
+    }
+    switch (this->GetType()) {
+    case object::type::INTEGER: {
+        auto thisInteger = static_cast<object::Integer *>(this);
+        auto thatInteger = static_cast<object::Integer *>(that);
+        return thisInteger->GetValue() == thatInteger->GetValue();
+        break;
+    }
+    case object::type::REAL: {
+        auto thisReal = static_cast<object::Real *>(this);
+        auto thatReal = static_cast<object::Real *>(that);
+        return thisReal->GetValue() == thatReal->GetValue();
+    }
+    case object::type::BOOL: {
+        auto thisBool = static_cast<object::Bool *>(this);
+        auto thatBool = static_cast<object::Bool *>(that);
+        return thisBool->GetValue() == thatBool->GetValue();
+    }
+    default: {
+        fprintf(stderr, "Not implemented!\n");
+        return false;
+    }
+    }
 }
 
 object::Integer::Integer(long value) {
@@ -33,14 +56,6 @@ const char* object::Integer::ToString() {
     return buffer;
 }
 
-bool object::Integer::EqualTo(Object *that) {
-    if (this->GetType() != that->GetType()) {
-        return false;
-    }
-    auto thatInteger = static_cast<object::Integer *>(that);
-    return this->GetValue() == thatInteger->GetValue();
-}
-
 object::Real::Real(double value) {
     this->type = object::type::REAL;
     this->value = value;
@@ -52,19 +67,18 @@ const char* object::Real::ToString() {
     return buffer;
 }
 
-bool object::Real::EqualTo(Object *that) {
-    if (this->GetType() != that->GetType()) {
-        return false;
-    }
-    auto thatReal = static_cast<object::Real *>(that);
-    return this->GetValue() == thatReal->GetValue();
-}
-
 object::Bool::Bool(bool value) {
     this->type = object::type::BOOL;
     this->value = value;
 }
 
+const char *object::Bool::ToString() {
+    if (this->value) {
+        return new char[3]{'#', 't', 0};
+    } else {
+        return new char[3]{'#', 'f', 0};
+    }
+}
 
 rv_obj* rv_integer_new(int v) {
     rv_obj* obj = (rv_obj*)malloc(sizeof(rv_obj));

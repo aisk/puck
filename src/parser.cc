@@ -38,17 +38,6 @@ void rv::Parser::SkipWhite() {
     }
 }
 
-static rv_obj* parse_expr(rv_parser* parser);
-
-rv_parser* rv_parser_new(char* src) {
-    rv_parser* parser;
-    parser = (rv_parser*) malloc(sizeof(rv_parser));
-    parser->src = src;
-    parser->pos = 0;
-    parser->line = 1;
-    return parser;
-}
-
 bool rv::Parser::Eat(char c) {
     if (this->Peek(0) != c) {
         return false;
@@ -151,6 +140,16 @@ rv::object::Object *rv::Parser::ParseList() {
 }
 
 rv::object::Object *rv::Parser::ParseBool() {
+    if (this->Peek(1) == 't') {
+        this->Pop(2);
+        return new object::Bool(true);
+    } else if (this->Peek(1) == 'f') {
+        this->Pop(2);
+        return new object::Bool(false);
+    } else {
+        puts("parse bool error");
+        exit(1);
+    }
     return NULL; // TODO
 }
 
@@ -160,6 +159,17 @@ rv::object::Object *rv::Parser::ParseString() {
 
 rv::object::Object *rv::Parser::ParseSymbol() {
     return NULL; // TODO
+}
+
+static rv_obj* parse_expr(rv_parser* parser);
+
+rv_parser* rv_parser_new(char* src) {
+    rv_parser* parser;
+    parser = (rv_parser*) malloc(sizeof(rv_parser));
+    parser->src = src;
+    parser->pos = 0;
+    parser->line = 1;
+    return parser;
 }
 
 static bool have_more(rv_parser* parser) {
