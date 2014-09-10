@@ -6,33 +6,61 @@
 
 #include "object.h"
 
-const char* rv::object::Object::ToString() {
+using namespace rv;
+
+const char* object::Object::ToString() {
     return "not implemented";
 }
 
-rv::object::type::type rv::object::Object::GetType() {
+object::type::type object::Object::GetType() {
     return this->type;
 }
 
-rv::object::Integer::Integer(long value) {
-    this->type = rv::object::type::INTEGER;
+bool object::Object::EqualTo(Object *that) {
+    fprintf(stderr, "You don't overide the Object::EuqalTo method!\n");
+    return false;
+}
+
+object::Integer::Integer(long value) {
+    this->type = object::type::INTEGER;
     this->value = value;
 }
 
-const char* rv::object::Integer::ToString() {
-    printf("%ld\n", this->value);
+const char* object::Integer::ToString() {
     auto buffer = new char[12]();
     snprintf(buffer, 12, "%ld", this->value);
     return buffer;
 }
 
-rv::object::Real::Real(double value) {
-    this->type = rv::object::type::REAL;
+bool object::Integer::EqualTo(Object *that) {
+    if (this->GetType() != that->GetType()) {
+        return false;
+    }
+    auto thatInteger = static_cast<object::Integer *>(that);
+    return this->GetValue() == thatInteger->GetValue();
+}
+
+object::Real::Real(double value) {
+    this->type = object::type::REAL;
     this->value = value;
 }
 
-rv::object::Bool::Bool(bool value) {
-    this->type = rv::object::type::BOOL;
+const char* object::Real::ToString() {
+    auto buffer = new char[12]();
+    snprintf(buffer, 12, "%f", this->value);
+    return buffer;
+}
+
+bool object::Real::EqualTo(Object *that) {
+    if (this->GetType() != that->GetType()) {
+        return false;
+    }
+    auto thatReal = static_cast<object::Real *>(that);
+    return this->GetValue() == thatReal->GetValue();
+}
+
+object::Bool::Bool(bool value) {
+    this->type = object::type::BOOL;
     this->value = value;
 }
 

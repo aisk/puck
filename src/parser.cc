@@ -80,7 +80,7 @@ void rv::Parser::SkipAll() {
 rv::object::Object *rv::Parser::ParseExpr() {
     this->SkipAll();
     if (!this->HaveMore()) {
-        fprintf(stderr, "Noting to parse.");
+        fprintf(stderr, "Nothing to parse.\n");
         exit(1);
     }
     char c = this->Peak(0);
@@ -342,7 +342,7 @@ static rv_obj* parse_string(rv_parser* parser) {
 static rv_obj* parse_expr(rv_parser* parser) {
     skip_all(parser);
     if (!have_more(parser)) {
-        puts("Noting to parse.");
+        puts("Nothing to parse.");
         exit(1);
     }
     char c = peak(parser, 0);

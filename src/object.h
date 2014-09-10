@@ -27,6 +27,7 @@ namespace object {
     public:
         virtual type::type GetType();
         virtual const char *ToString();
+        virtual bool EqualTo(Object*);
     };
 
     class Number : public Object {
@@ -36,13 +37,18 @@ namespace object {
         long value;
     public:
         Integer(long);
+        long GetValue() { return this->value; };
         const char *ToString();
+        bool EqualTo(Object*);
     };
 
     class Real : public Number {
         double value;
     public:
         Real(double);
+        double GetValue() { return this->value; };
+        const char *ToString();
+        bool EqualTo(Object*);
     };
 
     class Bool : public Object {
