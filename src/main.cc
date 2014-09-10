@@ -13,7 +13,7 @@ rv_obj* rv_cfunc_add(rv_obj* params) {
 int main() {
     char buffer[256];
     rv_env* global_env = rv_env_new(NULL);
-    rv_env_set(global_env, rv_string_new("+"), rv_cfunc_new("+", rv_cfunc_add));
+    rv_env_set(global_env, rv_string_new(const_cast<char *>("+")), rv_cfunc_new(const_cast<char *>("+"), rv_cfunc_add));
     while (true) {
         printf(">> ");
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) {

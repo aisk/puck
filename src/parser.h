@@ -8,7 +8,7 @@
 
 namespace rv{
 class Parser {
-    const char* src;
+    char* src;
     size_t pos;
     size_t line;
     bool HaveMore();
@@ -25,7 +25,7 @@ class Parser {
     rv::object::Object *ParseSymbol();
 public:
     rv::object::Object *ParseExpr();
-    Parser(const char*);
+    Parser(char*);
 };
 } // namespace rv
 

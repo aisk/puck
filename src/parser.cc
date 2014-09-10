@@ -5,7 +5,7 @@
 
 #include "assert.h"
 
-rv::Parser::Parser(const char *src) {
+rv::Parser::Parser(char *src) {
     this->src = src;
 }
 
