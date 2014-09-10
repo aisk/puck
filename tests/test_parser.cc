@@ -55,10 +55,23 @@ int TestParseBool() {
     return 0;
 }
 
+int TestParseString() {
+    char *src = const_cast<char *>(" \"hello world!\"  ");
+    char *str = const_cast<char *>("hello world!");
+    auto parser = std::make_shared<Parser>(src);
+    auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    if (!obj->EqualTo(new object::String(str))) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int TestParser() {
     int r = 0;
     r += TestParseInteger();
     r += TestParseReal();
     r += TestParseBool();
+    r += TestParseString();
     return r;
 }
