@@ -24,6 +24,7 @@ bool object::Object::EqualTo(Object *that) {
 object::Integer::Integer(long value) {
     this->type = object::type::INTEGER;
     this->value = value;
+    // std::cout << value << std::endl;
 }
 
 const char* object::Integer::ToString() {

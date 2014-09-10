@@ -1,12 +1,12 @@
-#include <iostream>
 #include <ctype.h>
 #include <string.h>
+#include <assert.h>
 #include "parser.h"
 #include "object.h"
 
-#include "assert.h"
-
 rv::Parser::Parser(char *src) {
+    // this->pos = 0;
+    // this->line = 0;
     this->src = src;
 }
 
@@ -19,7 +19,6 @@ void rv::Parser::Pop(size_t n) {
 }
 
 char rv::Parser::Peek(size_t idx) {
-    std::cout << this->pos << " " << idx << " " << this->src << std::endl;
     if (this->pos + idx < strlen(this->src)) {
         return this->src[this->pos + idx];
     } else {

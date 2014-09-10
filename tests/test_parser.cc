@@ -31,7 +31,6 @@ int TestParseReal() {
     char *src = new char[6]{'0', '.', '6', '1', '8', 0};
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    std::cout << obj->ToString() << std::endl;
     if (!obj->EqualTo(new object::Real(0.618))) {
         return 1;
     }
