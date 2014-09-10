@@ -38,6 +38,18 @@ int TestBool() {
     return 0;
 }
 
+int TestSymbol() {
+    char *str = const_cast<char *>("foo");
+    object::Object *obj = new object::Symbol(str);
+    if (obj->GetType() != object::type::SYMBOL) {
+        return 1;
+    }
+    if (strcmp(obj->ToString(), "'foo") != 0) {
+        return 1;
+    }
+    return 0;
+}
+
 int TestString() {
     char *str = const_cast<char *>("hello world!");
     object::Object *obj = new object::String(str);
@@ -55,6 +67,7 @@ int TestObject() {
     r += TestInteger();
     r += TestReal();
     r += TestBool();
+    r += TestSymbol();
     r += TestString();
     return r;
 }

@@ -66,8 +66,12 @@ namespace object {
 
     };
 
-    class Symbol : public Object {
-
+    class Symbol : public Object {    // FIXME: now symbol implemention is just a char array;
+        char *value;
+    public:
+        Symbol(char *);
+        char *GetValue() { return this->value; };
+        const char *ToString();
     };
 
     class Char : public Object {

@@ -46,6 +46,15 @@ bool object::Object::EqualTo(Object *that) {
             return false;
         }
     }
+    case object::type::SYMBOL: {
+        auto thisSymbol = static_cast<object::Symbol *>(this);
+        auto thatSymbol = static_cast<object::Symbol *>(that);
+        if (strcmp(thisSymbol->GetValue(), thatSymbol->GetValue()) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     default: {
         fprintf(stderr, "Not implemented!\n");
         return false;
@@ -86,6 +95,18 @@ const char *object::Bool::ToString() {
     } else {
         return new char[3]{'#', 'f', 0};
     }
+}
+
+object::Symbol::Symbol(char *value) {
+    this->type = object::type::SYMBOL;
+    this->value = value;
+}
+
+const char* object::Symbol::ToString() {
+    size_t length = strlen(this->value) + 2;
+    auto buffer = new char[length]();
+    snprintf(buffer, length, "'%s", this->value);
+    return buffer;
 }
 
 object::String::String(char *value) {

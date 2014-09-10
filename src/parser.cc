@@ -176,7 +176,37 @@ rv::object::Object *rv::Parser::ParseString() {
 }
 
 rv::object::Object *rv::Parser::ParseSymbol() {
-    return NULL; // TODO
+    this->Eat('\'');
+    size_t start_pos;
+    size_t n = 1;
+    bool stop = false;
+    start_pos = this->pos;
+    this->Pop(1);
+    while (true) {
+        if (!this->HaveMore()) {
+            break;
+        }
+        if (isspace(this->Peek(0))) {
+            break;
+        }
+        switch (this->Peek(0)) {
+            case '\'':
+            case '(':
+            case ')':
+            case ',':
+            case '@':
+                stop = true;
+                break;
+        }
+        // FIXME: not elegant
+        if (stop)
+            break;
+        this->Pop(1);
+        n++;
+    }
+    char* s = (char*)malloc(sizeof(char) * (n + 1));
+    strncpy(s, (this->src + start_pos), n);
+    return new object::Symbol(s);
 }
 
 static rv_obj* parse_expr(rv_parser* parser);

@@ -55,6 +55,18 @@ int TestParseBool() {
     return 0;
 }
 
+int TestParseSymbol() {
+    char *src = const_cast<char *>(" 'foo  ");
+    char *str = const_cast<char *>("foo");
+    auto parser = std::make_shared<Parser>(src);
+    auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    if (!obj->EqualTo(new object::Symbol(str))) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int TestParseString() {
     char *src = const_cast<char *>(" \"hello world!\"  ");
     char *str = const_cast<char *>("hello world!");
@@ -72,6 +84,7 @@ int TestParser() {
     r += TestParseInteger();
     r += TestParseReal();
     r += TestParseBool();
+    r += TestParseSymbol();
     r += TestParseString();
     return r;
 }
