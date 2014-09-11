@@ -63,6 +63,7 @@ namespace object {
         Object *cdr;
     public:
         Pair(Object *, Object *);
+        bool IsNil() { return (this->car == nullptr) && (this->cdr == nullptr); }
         Object *GetCar() { return this->car; }
         Object *GetCdr() { return this->cdr; }
         void SetCar(Object *car) { this->car = car; }

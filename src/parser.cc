@@ -4,21 +4,23 @@
 #include "parser.h"
 #include "object.h"
 
-rv::Parser::Parser(char *src) {
+using namespace rv;
+
+Parser::Parser(char *src) {
     this->pos = 0;
     this->line = 0;
     this->src = src;
 }
 
-bool rv::Parser::HaveMore() {
+bool Parser::HaveMore() {
     return this->pos < strlen(this->src);
 }
 
-void rv::Parser::Pop(size_t n) {
+void Parser::Pop(size_t n) {
     this->pos += n;
 }
 
-char rv::Parser::Peek(size_t idx) {
+char Parser::Peek(size_t idx) {
     if (this->pos + idx < strlen(this->src)) {
         return this->src[this->pos + idx];
     } else {
@@ -26,7 +28,7 @@ char rv::Parser::Peek(size_t idx) {
     }
 }
 
-void rv::Parser::SkipWhite() {
+void Parser::SkipWhite() {
     while (this->HaveMore()) {
         if (this->Eat('\n')) {
             this->line ++;
@@ -38,7 +40,7 @@ void rv::Parser::SkipWhite() {
     }
 }
 
-bool rv::Parser::Eat(char c) {
+bool Parser::Eat(char c) {
     if (this->Peek(0) != c) {
         return false;
     } else {
@@ -47,7 +49,7 @@ bool rv::Parser::Eat(char c) {
     }
 }
 
-void rv::Parser::SkipComment() {
+void Parser::SkipComment() {
     while (this->Eat(';')) {
         while (this->HaveMore() && !this->Eat('\n')) {
             this->Pop(1);
@@ -56,7 +58,7 @@ void rv::Parser::SkipComment() {
     }
 }
 
-void rv::Parser::SkipAll() {
+void Parser::SkipAll() {
     while (true) {
         this->SkipWhite();
         if (this->Peek(0) == ';') {
@@ -67,7 +69,7 @@ void rv::Parser::SkipAll() {
     }
 }
 
-rv::object::Object *rv::Parser::ParseExpr() {
+object::Object *Parser::ParseExpr() {
     this->SkipAll();
     if (!this->HaveMore()) {
         fprintf(stderr, "Nothing to parse.\n");
@@ -102,7 +104,7 @@ rv::object::Object *rv::Parser::ParseExpr() {
 }
 
 
-rv::object::Object *rv::Parser::ParseNumber() {
+object::Object *Parser::ParseNumber() {
     int sign = 1;
     bool is_real = false;
     if (this->Eat('-')) {
@@ -127,19 +129,35 @@ rv::object::Object *rv::Parser::ParseNumber() {
     if (is_real) {
         double value = atof(this->src + start_pos);
         value *= sign;
-        return new rv::object::Real(value);
+        return new object::Real(value);
     } else {
         long value = atoi(this->src + start_pos);
         value *= sign;
-        return new rv::object::Integer(value);
+        return new object::Integer(value);
     }
 }
 
-rv::object::Object *rv::Parser::ParseList() {
-    return NULL; // TODO
+object::Object *Parser::ParseList() {
+    object::Pair *head;
+    object::Pair *current;
+    head = new object::Pair(nullptr, nullptr);
+    current = head;
+    this->Eat('(');
+    while (this->HaveMore()) {
+        this->SkipAll();
+        if (this->Eat(')')) {
+            return head;
+        }
+        auto obj = this->ParseExpr();
+        current->SetCar(obj);
+        auto nil = new object::Pair(nullptr, nullptr);
+        current->SetCdr(nil);
+        current = nil;
+    }
+    return head;
 }
 
-rv::object::Object *rv::Parser::ParseBool() {
+object::Object *Parser::ParseBool() {
     if (this->Peek(1) == 't') {
         this->Pop(2);
         return new object::Bool(true);
@@ -153,7 +171,7 @@ rv::object::Object *rv::Parser::ParseBool() {
     return NULL; // TODO
 }
 
-rv::object::Object *rv::Parser::ParseString() {
+object::Object *Parser::ParseString() {
     this->Eat('"');
     size_t start_pos;
     size_t n = 0;
@@ -175,7 +193,7 @@ rv::object::Object *rv::Parser::ParseString() {
     return new object::String(s);
 }
 
-rv::object::Object *rv::Parser::ParseSymbol() {
+object::Object *Parser::ParseSymbol() {
     this->Eat('\'');
     size_t start_pos;
     size_t n = 1;

@@ -40,6 +40,10 @@ int TestBool() {
 
 int TestPair() {
     object::Object *nil = new object::Pair(nullptr, nullptr);
+    object::Object *one = new object::Integer(1);
+    object::Object *two = new object::Integer(2);
+    object::Object *three = new object::Integer(3);
+
     if (nil->GetType() != object::type::PAIR) {
         return 1;
     }
@@ -50,15 +54,18 @@ int TestPair() {
         return 1;
     }
 
-    object::Object *one = new object::Integer(1);
-    object::Object *two = new object::Integer(2);
-    object::Object *tree = new object::Integer(3);
-
-    object::Object *pair = new object::Pair(one, new object::Pair(two, new object::Pair(tree, nullptr)));
-    if (strcmp(pair->ToString(), "(1 . (2 . (3 . )))") != 0) {
+    object::Object *pair = new object::Pair(one, nil);
+    if (! pair->EqualTo(new object::Pair(one, nil))) {
         return 1;
     }
 
+    pair = new object::Pair(one, new object::Pair(two, new object::Pair(three, nil)));
+    if (strcmp(pair->ToString(), "(1 . (2 . (3 . ( . ))))") != 0) {
+        return 1;
+    }
+    if (! pair->EqualTo(new object::Pair(one, new object::Pair(two, new object::Pair(three, nil))))) {
+        return 1;
+    }
     return 0;
 }
 
@@ -88,11 +95,11 @@ int TestString() {
 
 int TestObject() {
     int r = 0;
-    // r += TestInteger();
-    // r += TestReal();
-    // r += TestBool();
+    r += TestInteger();
+    r += TestReal();
+    r += TestBool();
     r += TestPair();
-    // r += TestSymbol();
-    // r += TestString();
+    r += TestSymbol();
+    r += TestString();
     return r;
 }

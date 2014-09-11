@@ -67,6 +67,40 @@ int TestParseSymbol() {
     return 0;
 }
 
+int TestParseList() {
+    auto one = new object::Integer(1);
+    auto two = new object::Integer(2);
+    auto tree = new object::Integer(3);
+    auto four = new object::Integer(4);
+    auto five = new object::Integer(5);
+    auto nil = new object::Pair(nullptr, nullptr);
+
+    char *src = const_cast<char *>("   (  )   ");
+    auto parser = std::make_shared<Parser>(src);
+    auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    if (! obj->EqualTo(new object::Pair(nullptr, nullptr))) {
+        return 1;
+    }
+
+    src = const_cast<char *>(" ( 1   2 3)");
+    parser = std::make_shared<Parser>(src);
+    obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    auto expect = new object::Pair(one, new object::Pair(two, new object::Pair(tree, nil)));
+    // puts(expect->ToString());
+    // puts(obj->ToString());
+    if (! obj->EqualTo(expect)) {
+        return 1;
+    }
+
+    // src = const_cast<char *>(" (1 (2 3)) ");
+    // parser = std::make_shared<Parser>(src);
+    // obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    // expect = new object::Pair(one, new object::Pair(new object::Pair(new object::Pair(two, new object::Pair(tree, nil)), nil), nil));
+    // // puts(expect->ToString());
+
+    return 0;
+}
+
 int TestParseString() {
     char *src = const_cast<char *>(" \"hello world!\"  ");
     char *str = const_cast<char *>("hello world!");
@@ -85,6 +119,7 @@ int TestParser() {
     r += TestParseReal();
     r += TestParseBool();
     r += TestParseSymbol();
+    r += TestParseList();
     r += TestParseString();
     return r;
 }

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <iostream>
 
 #include "object.h"
 
@@ -40,6 +41,8 @@ bool object::Object::EqualTo(Object *that) {
     case object::type::PAIR: {
         auto thisPair = static_cast<object::Pair *>(this);
         auto thatPair = static_cast<object::Pair *>(this);
+        // puts(thisPair->ToString());
+        // puts(thatPair->ToString());
         if (thisPair->GetCar() == nullptr &&
             thisPair->GetCdr() == nullptr &&
             thatPair->GetCar() == nullptr &&
@@ -47,14 +50,20 @@ bool object::Object::EqualTo(Object *that) {
             return true;
         }
 
-        if (thisPair->GetCar() == nullptr && thatPair->GetCdr() != nullptr) {
+        if (thisPair->GetCar() == nullptr && thatPair->GetCar() != nullptr) {
+            return false;
+        }
+        if (thisPair->GetCdr() != nullptr && thatPair->GetCdr() == nullptr) {
             return false;
         }
         if (! thisPair->GetCar()->EqualTo(thatPair->GetCar())) {
             return false;
         }
 
-        if (thatPair->GetCar() == nullptr && thatPair->GetCdr() != nullptr) {
+        if (thisPair->GetCar() == nullptr && thatPair->GetCar() != nullptr) {
+            return false;
+        }
+        if (thisPair->GetCdr() != nullptr && thatPair->GetCdr() == nullptr) {
             return false;
         }
         if (! thisPair->GetCdr()->EqualTo(thatPair->GetCdr())) {
