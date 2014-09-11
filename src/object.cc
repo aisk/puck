@@ -37,6 +37,31 @@ bool object::Object::EqualTo(Object *that) {
         auto thatBool = static_cast<object::Bool *>(that);
         return thisBool->GetValue() == thatBool->GetValue();
     }
+    case object::type::PAIR: {
+        auto thisPair = static_cast<object::Pair *>(this);
+        auto thatPair = static_cast<object::Pair *>(this);
+        if (thisPair->GetCar() == nullptr &&
+            thisPair->GetCdr() == nullptr &&
+            thatPair->GetCar() == nullptr &&
+            thatPair->GetCdr() == nullptr) {
+            return true;
+        }
+
+        if (thisPair->GetCar() == nullptr && thatPair->GetCdr() != nullptr) {
+            return false;
+        }
+        if (! thisPair->GetCar()->EqualTo(thatPair->GetCar())) {
+            return false;
+        }
+
+        if (thatPair->GetCar() == nullptr && thatPair->GetCdr() != nullptr) {
+            return false;
+        }
+        if (! thisPair->GetCdr()->EqualTo(thatPair->GetCdr())) {
+            return false;
+        }
+        return true;
+    }
     case object::type::STRING: {
         auto thisString = static_cast<object::String *>(this);
         auto thatString = static_cast<object::String *>(that);
@@ -95,6 +120,37 @@ const char *object::Bool::ToString() {
     } else {
         return new char[3]{'#', 'f', 0};
     }
+}
+
+object::Pair::Pair(Object *car, Object *cdr) {
+    this->type = object::type::PAIR;
+    this->car = car;
+    this->cdr = cdr;
+}
+
+const char *object::Pair::ToString() {
+    const char *car_str;
+    if (this->car == nullptr) {
+        car_str = new char[1]{0};
+    } else {
+        car_str = this->car->ToString();
+    }
+    size_t car_str_length = strlen(car_str);
+
+    const char *cdr_str;
+    if (this->cdr == nullptr) {
+        cdr_str = new char[1]{0};
+    } else {
+        cdr_str = this->cdr->ToString();
+    }
+    size_t cdr_str_length = strlen(cdr_str);
+
+    size_t length = car_str_length + cdr_str_length + 6;
+    char* buffer = new char[length]();
+    snprintf(buffer, length, "(%s . %s)", car_str, cdr_str);
+    delete car_str;
+    delete cdr_str;
+    return buffer;
 }
 
 object::Symbol::Symbol(char *value) {

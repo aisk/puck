@@ -59,7 +59,15 @@ namespace object {
     };
 
     class Pair : public Object {
-
+        Object *car;
+        Object *cdr;
+    public:
+        Pair(Object *, Object *);
+        Object *GetCar() { return this->car; }
+        Object *GetCdr() { return this->cdr; }
+        void SetCar(Object *car) { this->car = car; }
+        void SetCdr(Object *cdr) { this->cdr = cdr; }
+        const char*ToString();
     };
 
     class List : public Pair {
