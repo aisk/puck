@@ -189,7 +189,7 @@ object::Object *Parser::ParseString() {
         exit(1);
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (this->src + start_pos), n);
+    strncpy(s, (this->src + start_pos), n + 1);
     return new object::String(s);
 }
 
@@ -223,7 +223,7 @@ object::Object *Parser::ParseSymbol() {
         n++;
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (this->src + start_pos), n);
+    strncpy(s, (this->src + start_pos), n + 1);
     return new object::Symbol(s);
 }
 
@@ -390,7 +390,7 @@ static rv_obj* parse_symbol(rv_parser* parser) {
         n++;
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (parser->src + start_pos), n);
+    strncpy(s, (parser->src + start_pos), n + 1);
     return rv_symbol_new(s);
 }
 
@@ -412,7 +412,7 @@ static rv_obj* parse_string(rv_parser* parser) {
         exit(1);
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (parser->src + start_pos), n);
+    strncpy(s, (parser->src + start_pos), n + 1);
     return rv_string_new(s);
 }
 
