@@ -26,7 +26,8 @@ rv_dict* rv_dict_new() {
 }
 
 void rv_dict_set(rv_dict* dict, rv_obj* key, rv_obj* value) {
-    rv_dict_node match_node = {.key=key};
+    rv_dict_node match_node;
+    match_node.key = key;
     rv_dict_node* node = RB_FIND(rv_dict, dict, &match_node);
     if (node == NULL) {
         rv_dict_node *node = (rv_dict_node*)malloc(sizeof(rv_dict_node));
@@ -39,7 +40,8 @@ void rv_dict_set(rv_dict* dict, rv_obj* key, rv_obj* value) {
 }
 
 rv_obj* rv_dict_get(rv_dict* dict, rv_obj* key) {
-    rv_dict_node match_node = {.key=key};
+    rv_dict_node match_node;
+    match_node.key = key;
     rv_dict_node* node = RB_FIND(rv_dict, dict, &match_node);
     if (node == NULL) {
         return NULL;
