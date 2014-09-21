@@ -15,7 +15,7 @@ int TestParseInteger() {
     if (!obj->EqualTo(new object::Integer(1))) {
         return 1;
     }
-    
+
     src = const_cast<char *>(" -42 ");
     parser = std::make_shared<Parser>(src);
     obj = std::shared_ptr<object::Object>(parser->ParseExpr());
@@ -40,7 +40,7 @@ int TestParseReal() {
     if (!obj->EqualTo(new object::Real(-3.14))) {
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -124,3 +124,4 @@ int TestParser() {
     r += TestParseString();
     return r;
 }
+
