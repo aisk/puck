@@ -26,8 +26,8 @@ namespace object {
     protected:
         type::type type;
     public:
-        virtual type::type GetType();
-        virtual const char *ToString();
+        inline type::type GetType() { return type; };
+        virtual const char *ToString() = 0;
         bool EqualTo(Object *);
     };
 
@@ -38,8 +38,8 @@ namespace object {
         long value;
     public:
         Integer(long);
-        inline long GetValue() { return this->value; };
-        const char *ToString();
+        inline long GetValue() { return value; };
+        virtual const char *ToString();
     };
 
     class Real : public Number {
@@ -47,7 +47,7 @@ namespace object {
     public:
         Real(double);
         inline double GetValue() { return this->value; };
-        const char *ToString();
+        virtual const char *ToString();
     };
 
     class Bool : public Object {
@@ -55,7 +55,7 @@ namespace object {
     public:
         Bool(bool);
         inline bool GetValue() { return this->value; };
-        const char *ToString();
+        virtual const char *ToString();
     };
 
     class Pair : public Object {
@@ -68,7 +68,7 @@ namespace object {
         Object *GetCdr() { return this->cdr; }
         void SetCar(Object *car) { this->car = car; }
         void SetCdr(Object *cdr) { this->cdr = cdr; }
-        const char*ToString();
+        virtual const char*ToString();
     };
 
     class List : public Pair {
@@ -80,7 +80,7 @@ namespace object {
     public:
         Symbol(char *);
         inline char *GetValue() { return this->value; };
-        const char *ToString();
+        virtual const char *ToString();
     };
 
     class Char : public Object {
@@ -92,7 +92,7 @@ namespace object {
     public:
         String(char *);
         inline char *GetValue() { return this->value; };
-        const char *ToString();
+        virtual const char *ToString();
     };
 
     class Vector : public Object {

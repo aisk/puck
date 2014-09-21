@@ -9,14 +9,6 @@
 
 using namespace rv;
 
-const char* object::Object::ToString() {
-    return "not implemented";
-}
-
-object::type::type object::Object::GetType() {
-    return this->type;
-}
-
 bool object::Object::EqualTo(Object *that) {
     if (this->GetType() != that->GetType()) {
         return false;

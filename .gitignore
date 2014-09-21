@@ -4,6 +4,7 @@ build/
 *.o
 rivai
 test_runner
+tests/catch.hpp
 
 *.swp
 *.swo
