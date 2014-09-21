@@ -41,8 +41,6 @@ bool object::Object::EqualTo(Object *that) {
     case object::type::PAIR: {
         auto thisPair = static_cast<object::Pair *>(this);
         auto thatPair = static_cast<object::Pair *>(this);
-        // puts(thisPair->ToString());
-        // puts(thatPair->ToString());
         if (thisPair->GetCar() == nullptr &&
             thisPair->GetCdr() == nullptr &&
             thatPair->GetCar() == nullptr &&

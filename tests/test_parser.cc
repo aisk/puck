@@ -86,8 +86,6 @@ int TestParseList() {
     parser = std::make_shared<Parser>(src);
     obj = std::shared_ptr<object::Object>(parser->ParseExpr());
     auto expect = new object::Pair(one, new object::Pair(two, new object::Pair(tree, nil)));
-    // puts(expect->ToString());
-    // puts(obj->ToString());
     if (! obj->EqualTo(expect)) {
         return 1;
     }
