@@ -26,6 +26,7 @@ namespace object {
     protected:
         type::type type;
     public:
+        virtual ~Object() {};
         inline type::type GetType() { return type; };
         virtual const char *ToString() = 0;
         bool EqualTo(Object *);
@@ -38,6 +39,7 @@ namespace object {
         long value;
     public:
         Integer(long);
+        virtual ~Integer() {};
         inline long GetValue() { return value; };
         virtual const char *ToString();
     };
@@ -46,6 +48,7 @@ namespace object {
         double value;
     public:
         Real(double);
+        virtual ~Real() {};
         inline double GetValue() { return this->value; };
         virtual const char *ToString();
     };
@@ -54,6 +57,7 @@ namespace object {
         bool value;
     public:
         Bool(bool);
+        virtual ~Bool() {};
         inline bool GetValue() { return this->value; };
         virtual const char *ToString();
     };
@@ -63,6 +67,7 @@ namespace object {
         Object *cdr;
     public:
         Pair(Object *, Object *);
+        virtual ~Pair() {};
         bool IsNil() { return (this->car == nullptr) && (this->cdr == nullptr); }
         Object *GetCar() { return this->car; }
         Object *GetCdr() { return this->cdr; }
@@ -79,6 +84,7 @@ namespace object {
         char *value;
     public:
         Symbol(char *);
+        virtual ~Symbol();
         inline char *GetValue() { return this->value; };
         virtual const char *ToString();
     };
@@ -91,6 +97,7 @@ namespace object {
         char *value;
     public:
         String(char *);
+        virtual ~String();
         inline char *GetValue() { return this->value; };
         virtual const char *ToString();
     };

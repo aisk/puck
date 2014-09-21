@@ -2,69 +2,48 @@
 #include <memory>
 #include <stdio.h>
 #include <iostream>
-
+#include "catch.hpp"
 #include "../src/parser.h"
 
 using namespace rv;
 
-int TestParseInteger() {
-
+TEST_CASE("parse integer", "[parser]") {
     char *src =  const_cast<char *>("  1");
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Integer(1))) {
-        return 1;
-    }
+    REQUIRE(obj->EqualTo(std::make_shared<object::Integer>(1).get()));
 
     src = const_cast<char *>(" -42 ");
     parser = std::make_shared<Parser>(src);
     obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Integer(-42))) {
-        return 1;
-    }
-
-    return 0;
+    REQUIRE(obj->EqualTo(std::make_shared<object::Integer>(-42).get()));
 }
 
-int TestParseReal() {
+TEST_CASE("parse real", "[parser]") {
     char *src = const_cast<char *>("0.618");
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Real(0.618))) {
-        return 1;
-    }
+    REQUIRE(obj->EqualTo(std::make_shared<object::Real>(0.618).get()));
 
     src = const_cast<char *>("  -3.14  ");
     parser = std::make_shared<Parser>(src);
     obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Real(-3.14))) {
-        return 1;
-    }
-
-    return 0;
+    REQUIRE(obj->EqualTo(std::make_shared<object::Real>(-3.14).get()));
 }
 
-int TestParseBool() {
+TEST_CASE("parse bool", "[parser]") {
     char *src = const_cast<char *>("   #t  ");
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Bool(true))) {
-        return 1;
-    }
-
-    return 0;
+    REQUIRE(obj->EqualTo(std::make_shared<object::Bool>(true).get()));
 }
 
-int TestParseSymbol() {
+TEST_CASE("parse symbol", "[parser]") {
     char *src = const_cast<char *>(" 'foo  ");
     char *str = const_cast<char *>("foo");
     auto parser = std::make_shared<Parser>(src);
     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::Symbol(str))) {
-        return 1;
-    }
-
-    return 0;
+    REQUIRE(obj->EqualTo(std::make_shared<object::Symbol>(str).get()));
 }
 
 int TestParseList() {
@@ -102,26 +81,10 @@ int TestParseList() {
     return 0;
 }
 
-int TestParseString() {
-    char *src = const_cast<char *>(" \"hello world!\"  ");
-    char *str = const_cast<char *>("hello world!");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    if (!obj->EqualTo(new object::String(str))) {
-        return 1;
-    }
-
-    return 0;
-}
-
-int TestParser() {
-    int r = 0;
-    r += TestParseInteger();
-    r += TestParseReal();
-    r += TestParseBool();
-    r += TestParseSymbol();
-    r += TestParseList();
-    r += TestParseString();
-    return r;
-}
-
+// TEST_CASE("parse string", "[parser]") {
+//     char *src = const_cast<char *>(" \"hello world!\"  ");
+//     char *str = const_cast<char *>("hello world!");
+//     auto parser = std::make_shared<Parser>(src);
+//     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+//     REQUIRE(obj->EqualTo(std::make_shared<object::String>(str).get()));
+// }

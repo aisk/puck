@@ -5,7 +5,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
 FILE(GLOB SOURCES "./src/[^main]*.cc")
 ADD_EXECUTABLE(rivai ${SOURCES} "./src/main.cc")
 
-# FILE(GLOB TESTING_SOURCES "./tests/*.cc")
 ADD_EXECUTABLE(run_test "./tests/main.cc" ${SOURCES})
 
 set(CATCH_PATH "${CMAKE_SOURCE_DIR}/tests/catch.hpp")

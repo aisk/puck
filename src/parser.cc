@@ -191,7 +191,9 @@ object::Object *Parser::ParseString() {
     char* s = static_cast<char *>(malloc(sizeof(char) * n));
     strncpy(s, (this->src + start_pos), n + 1);
     s[n] = 0;
-    return new object::String(s);
+    auto str = new object::String(s);
+    delete s;
+    return str;
 }
 
 object::Object *Parser::ParseSymbol() {
@@ -226,7 +228,9 @@ object::Object *Parser::ParseSymbol() {
     char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
     strncpy(s, (this->src + start_pos), n);
     s[n] = 0;
-    return new object::Symbol(s);
+    auto symbol = new object::Symbol(s);
+    delete s;
+    return symbol;
 }
 
 static rv_obj* parse_expr(rv_parser* parser);

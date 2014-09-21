@@ -154,7 +154,16 @@ const char *object::Pair::ToString() {
 
 object::Symbol::Symbol(char *value) {
     this->type = object::type::SYMBOL;
-    this->value = value;
+    
+    // TODO: intern all the symbols
+    size_t length = strlen(value) + 1;
+    this->value = new char[length]();
+    strncpy(this->value, value, length);
+    this->value[length - 1] = 0;
+}
+
+object::Symbol::~Symbol() {
+    delete value;
 }
 
 const char* object::Symbol::ToString() {
@@ -166,7 +175,16 @@ const char* object::Symbol::ToString() {
 
 object::String::String(char *value) {
     this->type = object::type::STRING;
-    this->value = value;
+
+    // copy the char array
+    size_t length = strlen(value) + 1;
+    this->value = new char[length]();
+    strncpy(this->value, value, length);
+    this->value[length - 1] = 0;
+}
+
+object::String::~String() {
+    delete value;
 }
 
 const char* object::String::ToString() {
