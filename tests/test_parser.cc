@@ -90,11 +90,14 @@ int TestParseList() {
         return 1;
     }
 
-    // src = const_cast<char *>(" (1 (2 3)) ");
-    // parser = std::make_shared<Parser>(src);
-    // obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-    // expect = new object::Pair(one, new object::Pair(new object::Pair(new object::Pair(two, new object::Pair(tree, nil)), nil), nil));
-    // // puts(expect->ToString());
+    src = const_cast<char *>(" (1 (2 3)) ");
+    parser = std::make_shared<Parser>(src);
+    obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    auto expcetInner = new object::Pair(two, new object::Pair(tree, nil));
+    expect = new object::Pair(one, new object::Pair(expcetInner, nil));
+    if (! obj->EqualTo(expect)) {
+        return 1;
+    }
 
     return 0;
 }
