@@ -188,8 +188,8 @@ object::Object *Parser::ParseString() {
         puts("Expecting '\"' to end a string.");
         exit(1);
     }
-    char* s = static_cast<char *>(malloc(sizeof(char) * n));
-    strncpy(s, (this->src + start_pos), n + 1);
+    char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
+    strncpy(s, (this->src + start_pos), n);
     s[n] = 0;
     auto str = new object::String(s);
     delete s;

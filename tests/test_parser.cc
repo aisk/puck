@@ -81,10 +81,10 @@ int TestParseList() {
     return 0;
 }
 
-// TEST_CASE("parse string", "[parser]") {
-//     char *src = const_cast<char *>(" \"hello world!\"  ");
-//     char *str = const_cast<char *>("hello world!");
-//     auto parser = std::make_shared<Parser>(src);
-//     auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
-//     REQUIRE(obj->EqualTo(std::make_shared<object::String>(str).get()));
-// }
+TEST_CASE("parse string", "[parser]") {
+    char *src = const_cast<char *>("\"hello world!\"");
+    char *str = const_cast<char *>("hello world!");
+    auto parser = std::make_shared<Parser>(src);
+    auto obj = std::shared_ptr<object::Object>(parser->ParseExpr());
+    REQUIRE(obj->EqualTo(std::make_shared<object::String>(str).get()));
+}
