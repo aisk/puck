@@ -34,9 +34,9 @@ bool object::Object::EqualTo(Object *that) {
         auto thisPair = static_cast<object::Pair *>(this);
         auto thatPair = static_cast<object::Pair *>(this);
         if (thisPair->GetCar() == nullptr &&
-            thisPair->GetCdr() == nullptr &&
-            thatPair->GetCar() == nullptr &&
-            thatPair->GetCdr() == nullptr) {
+                thisPair->GetCdr() == nullptr &&
+                thatPair->GetCar() == nullptr &&
+                thatPair->GetCdr() == nullptr) {
             return true;
         }
 
@@ -115,9 +115,9 @@ object::Bool::Bool(bool value) {
 
 const char *object::Bool::ToString() {
     if (this->value) {
-        return new char[3]{'#', 't', 0};
+        return new char[3] {'#', 't', 0};
     } else {
-        return new char[3]{'#', 'f', 0};
+        return new char[3] {'#', 'f', 0};
     }
 }
 
@@ -130,7 +130,7 @@ object::Pair::Pair(Object *car, Object *cdr) {
 const char *object::Pair::ToString() {
     const char *car_str;
     if (this->car == nullptr) {
-        car_str = new char[1]{0};
+        car_str = new char[1] {0};
     } else {
         car_str = this->car->ToString();
     }
@@ -138,7 +138,7 @@ const char *object::Pair::ToString() {
 
     const char *cdr_str;
     if (this->cdr == nullptr) {
-        cdr_str = new char[1]{0};
+        cdr_str = new char[1] {0};
     } else {
         cdr_str = this->cdr->ToString();
     }
@@ -154,7 +154,7 @@ const char *object::Pair::ToString() {
 
 object::Symbol::Symbol(char *value) {
     this->type = object::type::SYMBOL;
-    
+
     // TODO: intern all the symbols
     size_t length = strlen(value) + 1;
     this->value = new char[length]();
@@ -345,14 +345,15 @@ void rv_obj_free(rv_obj* obj) {
 
 bool rv_obj_is_nil(rv_obj* obj) {
     return (obj->t == RV_TYPE_PAIR)
-        && (obj->pair_v.car == NULL)
-        && (obj->pair_v.cdr == NULL)
-    ;
+           && (obj->pair_v.car == NULL)
+           && (obj->pair_v.cdr == NULL)
+           ;
 }
 
 bool rv_obj_is_procedure(rv_obj* obj) {
     return (obj->t == RV_TYPE_PAIR)
-        && (obj->pair_v.car->t == RV_TYPE_SYMBOL)
-        && (strcmp(obj->pair_v.car->string_v, "lambda") == 0)
-    ;
+           && (obj->pair_v.car->t == RV_TYPE_SYMBOL)
+           && (strcmp(obj->pair_v.car->string_v, "lambda") == 0)
+           ;
 }
+
