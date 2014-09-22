@@ -1,5 +1,0 @@
-namespace rv {
-namespace runtime {
-
-}   
-}
