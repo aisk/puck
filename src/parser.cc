@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "parser.h"
 #include "object.h"
+#include "state.h"
 
 using namespace rv;
 
@@ -129,18 +130,18 @@ object::Object *Parser::ParseNumber() {
     if (is_real) {
         double value = atof(this->src + start_pos);
         value *= sign;
-        return new object::Real(value);
+        return gstate->allocate<object::Real>(value);
     } else {
         long value = atoi(this->src + start_pos);
         value *= sign;
-        return new object::Integer(value);
+        return gstate->allocate<object::Integer>(value);
     }
 }
 
 object::Object *Parser::ParseList() {
     object::Pair *head;
     object::Pair *current;
-    head = new object::Pair(nullptr, nullptr);
+    head = gstate->allocate<object::Pair>(nullptr, nullptr);
     current = head;
     this->Eat('(');
     while (this->HaveMore()) {
@@ -150,7 +151,7 @@ object::Object *Parser::ParseList() {
         }
         auto obj = this->ParseExpr();
         current->SetCar(obj);
-        auto nil = new object::Pair(nullptr, nullptr);
+        auto nil = gstate->allocate<object::Pair>(nullptr, nullptr);
         current->SetCdr(nil);
         current = nil;
     }
@@ -160,10 +161,10 @@ object::Object *Parser::ParseList() {
 object::Object *Parser::ParseBool() {
     if (this->Peek(1) == 't') {
         this->Pop(2);
-        return new object::Bool(true);
+        return gstate->allocate<object::Bool>(true);
     } else if (this->Peek(1) == 'f') {
         this->Pop(2);
-        return new object::Bool(false);
+        return gstate->allocate<object::Bool>(false);
     } else {
         puts("parse bool error");
         exit(1);
@@ -191,7 +192,7 @@ object::Object *Parser::ParseString() {
     char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
     strncpy(s, (this->src + start_pos), n);
     s[n] = 0;
-    auto str = new object::String(s);
+    auto str = gstate->allocate<object::String>(s);
     delete s;
     return str;
 }
@@ -228,7 +229,7 @@ object::Object *Parser::ParseSymbol() {
     char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
     strncpy(s, (this->src + start_pos), n);
     s[n] = 0;
-    auto symbol = new object::Symbol(s);
+    auto symbol = gstate->allocate<object::Symbol>(s);
     delete s;
     return symbol;
 }
