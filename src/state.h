@@ -9,6 +9,7 @@ namespace rv {
 class State {
     std::list<rv::object::Object *> objs;
 public:
+    inline std::list<rv::object::Object *> GetObjs() { return objs; }
     template<typename T> T *allocate() {
         T* a = new T();
         objs.push_back(a);

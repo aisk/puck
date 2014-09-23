@@ -69,10 +69,10 @@ namespace object {
         Pair(Object *, Object *);
         virtual ~Pair() {};
         bool IsNil() { return (this->car == nullptr) && (this->cdr == nullptr); }
-        Object *GetCar() { return this->car; }
-        Object *GetCdr() { return this->cdr; }
-        void SetCar(Object *car) { this->car = car; }
-        void SetCdr(Object *cdr) { this->cdr = cdr; }
+        inline Object *GetCar() { return this->car; }
+        inline Object *GetCdr() { return this->cdr; }
+        inline void SetCar(Object *car) { this->car = car; }
+        inline void SetCdr(Object *cdr) { this->cdr = cdr; }
         virtual const char*ToString();
     };
 
