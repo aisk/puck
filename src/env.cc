@@ -1,6 +1,33 @@
 #include "dict.h"
 #include "env.h"
 
+using namespace rv;
+
+Env::Env() {
+    this->outer = nullptr;
+}
+
+Env::Env(Env &outer) {
+    this->outer = &outer;
+}
+
+void Env::Set(object::Object &key, object::Object &value) {
+    store[&key] = &value;
+}
+
+object::Object *Env::Get(object::Object &key) {
+    auto iter = store.find(&key);
+    if (iter == store.end()) {
+        auto outer = GetOuter();
+        if (outer != nullptr) {
+            return outer->Get(key);
+        } else {
+            return nullptr;
+        }
+    }
+    return iter->second;
+}
+
 rv_env* rv_env_new(rv_env* outer) {
     rv_env* env = (rv_env*)malloc(sizeof(rv_env));
     env->dict = rv_dict_new();

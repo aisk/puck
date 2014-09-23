@@ -3,3 +3,4 @@
 #include "catch.hpp"
 #include "test_object.cc"
 #include "test_parser.cc"
+#include "test_env.cc"

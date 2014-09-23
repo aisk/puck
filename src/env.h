@@ -1,7 +1,22 @@
 #ifndef RIVAI_ENV_H
 #define RIVAI_ENV_H
 
+#include <map>
 #include "dict.h"
+
+namespace rv {
+class Env {
+    std::map<object::Object *, object::Object *> store;
+    Env *outer;
+public:
+    Env();
+    Env(Env &);
+    inline Env *GetOuter() { return outer; };
+    object::Object *Get(object::Object &key);
+    void Set(object::Object &key, object::Object &value);
+};
+
+} // namespace rv
 
 struct rv_env;
 typedef struct rv_env rv_env;
@@ -16,3 +31,4 @@ void rv_env_set(rv_env* env, rv_obj* key, rv_obj* value);
 rv_obj* rv_env_get(rv_env* env, rv_obj* key);
 
 #endif
+
