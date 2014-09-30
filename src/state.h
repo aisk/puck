@@ -1,15 +1,15 @@
-#ifndef RV_STATE_H
-#define RV_STATE_H
+#ifndef PUCK_STATE_H
+#define PUCK_STATE_H
 
 #include <list>
 #include "object.h"
 
-namespace rv {
+namespace puck {
 
 class State {
-    std::list<rv::object::Object *> objs;
+    std::list<object::Object *> objs;
 public:
-    inline std::list<rv::object::Object *> GetObjs() { return objs; }
+    inline std::list<object::Object *> GetObjs() { return objs; }
     template<typename T> T *allocate() {
         T* a = new T();
         objs.push_back(a);
@@ -37,6 +37,6 @@ extern State *gstate;
 void InitGlobalState();
 void DestroyGlobalState();
 
-} // namespace rv
+} // namespace puck
 
 #endif

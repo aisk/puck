@@ -1,9 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-PROJECT(rivai)
+PROJECT(puck)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
 FILE(GLOB SOURCES "./src/[^main]*.cc")
-ADD_EXECUTABLE(rivai ${SOURCES} "./src/main.cc")
+ADD_EXECUTABLE(puck ${SOURCES} "./src/main.cc")
 
 ADD_EXECUTABLE(run_test "./tests/main.cc" ${SOURCES})
 

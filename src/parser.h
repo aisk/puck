@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "object.h"
 
-namespace rv{
+namespace puck {
 class Parser {
     char* src;
     size_t pos;
@@ -18,13 +18,13 @@ class Parser {
     void SkipWhite();
     void SkipComment();
     void SkipAll();
-    rv::object::Object *ParseNumber();
-    rv::object::Object *ParseList();
-    rv::object::Object *ParseBool();
-    rv::object::Object *ParseString();
-    rv::object::Object *ParseSymbol();
+    object::Object *ParseNumber();
+    object::Object *ParseList();
+    object::Object *ParseBool();
+    object::Object *ParseString();
+    object::Object *ParseSymbol();
 public:
-    rv::object::Object *ParseExpr();
+    object::Object *ParseExpr();
     Parser(char*);
 };
 } // namespace rv

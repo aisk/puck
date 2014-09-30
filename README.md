@@ -1,3 +1,3 @@
-## rivai
+## puck
 
-`rivai` is a simple and stupid scheme implementation in `c`.
+`puck` is a simple scheme implementation in `c++`.

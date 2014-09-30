@@ -1,10 +1,10 @@
-#ifndef RV_OBJECT_H
-#define RV_OBJECT_H
+#ifndef PUCK_OBJECT_H
+#define PUCK_OBJECT_H
 
 #include <stdlib.h>
 #include <stdbool.h>
 
-namespace rv {
+namespace puck {
 namespace object {
     namespace type {
         enum type {

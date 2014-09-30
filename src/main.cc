@@ -6,7 +6,7 @@
 #include "object.h"
 #include "state.h"
 
-using namespace rv;
+using namespace puck;
 
 int main() {
     puts("Welcome to rivai.");

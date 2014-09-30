@@ -6,7 +6,7 @@
 #include "../src/parser.h"
 #include "../src/state.h"
 
-using namespace rv;
+using namespace puck;
 
 TEST_CASE("parse integer", "[parser]") {
     InitGlobalState();

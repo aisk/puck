@@ -7,7 +7,7 @@
 
 #include "object.h"
 
-using namespace rv;
+using namespace puck;
 
 bool object::Object::EqualTo(Object *that) {
     if (this->GetType() != that->GetType()) {

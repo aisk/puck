@@ -4,14 +4,14 @@
 #include "../src/object.h"
 #include "catch.hpp"
 
-using namespace rv;
+using namespace puck;
 
 TEST_CASE("integer", "[object]") {
-    auto one = rv::object::Integer(1);
-    auto two = rv::object::Integer(2);
+    auto one = object::Integer(1);
+    auto two = object::Integer(2);
     auto anotherOne = object::Integer(1);
 
-    REQUIRE(one.GetType() == rv::object::type::INTEGER);
+    REQUIRE(one.GetType() == object::type::INTEGER);
     REQUIRE(one.EqualTo(&two) == false);
     REQUIRE(one.EqualTo(&anotherOne) == true);
 }

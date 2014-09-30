@@ -3,7 +3,7 @@
 #include "../src/env.h"
 #include "../src/object.h"
 
-using namespace rv;
+using namespace puck;
 
 TEST_CASE("simple env set", "[env]") {
     auto foo = object::Integer(1);

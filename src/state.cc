@@ -2,20 +2,20 @@
 #include <iostream>
 #include "state.h"
 
-using namespace rv;
+using namespace puck;
 
-rv::State *rv::gstate;
+puck::State *puck::gstate;
 
-void rv::InitGlobalState() {
-    rv::gstate = new rv::State();
+void puck::InitGlobalState() {
+    puck::gstate = new puck::State();
 }
 
-void rv::DestroyGlobalState() {
-    auto objs = rv::gstate->GetObjs();
+void puck::DestroyGlobalState() {
+    auto objs = puck::gstate->GetObjs();
     for (auto iter = objs.begin(); iter != objs.end(); ++iter) {
         auto obj = *iter;
         delete obj;
     }
-    delete rv::gstate;
+    delete puck::gstate;
 }
 

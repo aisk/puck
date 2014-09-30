@@ -1,7 +1,7 @@
 #include "dict.h"
 #include "env.h"
 
-using namespace rv;
+using namespace puck;
 
 Env::Env() {
     this->outer = nullptr;

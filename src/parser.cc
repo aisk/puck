@@ -5,7 +5,7 @@
 #include "object.h"
 #include "state.h"
 
-using namespace rv;
+using namespace puck;
 
 Parser::Parser(char *src) {
     this->pos = 0;

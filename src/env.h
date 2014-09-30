@@ -1,10 +1,10 @@
-#ifndef RIVAI_ENV_H
-#define RIVAI_ENV_H
+#ifndef PUCK_ENV_H
+#define PUCK_ENV_H
 
 #include <map>
 #include "dict.h"
 
-namespace rv {
+namespace puck {
 class Env {
     std::map<object::Object *, object::Object *> store;
     Env *outer;
