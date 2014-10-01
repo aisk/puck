@@ -5,8 +5,33 @@
 #include "env.h"
 #include "eval.h"
 
+using namespace puck;
+
 static void debug(const char* s) {
     printf("[DEBUG] %s\n", s);
+}
+
+object::Object *puck::Eval(object::Object &obj, Env &env) {
+    switch (obj.GetType()) {
+    case object::type::SYMBOL:
+    {
+        debug("eval symbol");
+        return env.Get(obj);
+    }
+    case object::type::INTEGER:
+    case object::type::REAL:
+    case object::type::BOOL:
+    case object::type::CHAR:
+    case object::type::STRING:
+    case object::type::VECTOR:
+    case object::type::NIL:
+    {
+        debug("eval literal");
+        return &obj;
+    }
+
+    }
+    return nullptr;
 }
 
 rv_obj* rv_eval(rv_obj* obj, rv_env* env) {
@@ -33,7 +58,8 @@ rv_obj* rv_eval(rv_obj* obj, rv_env* env) {
         if (car->t == RV_TYPE_SYMBOL && strcmp(car->string_v, "quote") == 0) {
             debug("eval quote");
             return cdr;
-        } if (car->t == RV_TYPE_SYMBOL && strcmp(car->string_v, "if") == 0) {
+        }
+        if (car->t == RV_TYPE_SYMBOL && strcmp(car->string_v, "if") == 0) {
             debug("eval if");
         } else if (car->t == RV_TYPE_SYMBOL && strcmp(car->string_v, "define") == 0) {
             debug("eval define");
@@ -76,3 +102,4 @@ rv_obj* rv_eval(rv_obj* obj, rv_env* env) {
     }
     return NULL;
 }
+

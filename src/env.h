@@ -16,7 +16,7 @@ public:
     void Set(object::Object &key, object::Object &value);
 };
 
-} // namespace rv
+} // namespace puck
 
 struct rv_env;
 typedef struct rv_env rv_env;
@@ -31,4 +31,3 @@ void rv_env_set(rv_env* env, rv_obj* key, rv_obj* value);
 rv_obj* rv_env_get(rv_env* env, rv_obj* key);
 
 #endif
-

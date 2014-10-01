@@ -12,19 +12,27 @@ int main() {
     puts("Welcome to rivai.");
     char buffer[256];
     InitGlobalState();
+    Env root_env;
+
     while (true) {
         printf(">> ");
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
             break;
         }
-        puts(buffer);
+        // puts(buffer);
+
+        auto parser = Parser(buffer);
+        auto obj = parser.ParseExpr();
+        printf("parse => %s\n", obj->ToString());
+
+        auto ret = puck::Eval(*obj, root_env);
+        printf("eval => %s\n", ret->ToString());
     }
 
     DestroyGlobalState();
 }
 
 rv_obj* rv_cfunc_add(rv_obj* params) {
-    // puts("hehe");
     return rv_integer_new(123);
 }
 
@@ -50,6 +58,6 @@ rv_obj* rv_cfunc_add(rv_obj* params) {
 //             printf("\n");
 //         }
 //     }
-// 
+//
 //     return 0;
 // }
