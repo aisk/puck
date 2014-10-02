@@ -16,6 +16,7 @@ object::Object *puck::Eval(object::Object &obj, Env &env) {
     case object::type::SYMBOL:
     {
         debug("eval symbol");
+        puts(obj.ToString());
         return env.Get(obj);
     }
     case object::type::INTEGER:
@@ -28,6 +29,27 @@ object::Object *puck::Eval(object::Object &obj, Env &env) {
     {
         debug("eval literal");
         return &obj;
+    }
+    case object::type::PAIR:
+    {
+        debug("eval pair");
+        auto pair = static_cast<object::Pair &>(obj);
+        auto car = pair.GetCar();
+        auto cdr = pair.GetCdr();
+        if (car->GetType() == object::type::SYMBOL) {
+            auto car_cstr = static_cast<object::String *>(car)->GetValue();
+            if (strcmp(car_cstr, "quote") == 0) {
+                debug("eval quote");
+            } else if (strcmp(car_cstr, "if") == 0) {
+                debug("eval if");
+            } else if (strcmp(car_cstr, "define") == 0) {
+                debug("eval define");
+                auto var = static_cast<object::Pair *>(cdr)->GetCar();
+                auto exp = static_cast<object::Pair *>(static_cast<object::Pair *>(cdr))->GetCar();
+                env.Set(*var, *Eval(*exp, env));
+                return var;
+            }
+        }
     }
 
     }
