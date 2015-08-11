@@ -1,7 +1,7 @@
 #ifndef RIVAI_DICT_H
 #define RIVAI_DICT_H
 
-#include <uv-private/tree.h>
+#include "tree.h"
 #include "object.h"
 
 struct rv_dict_node;
