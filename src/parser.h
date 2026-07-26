@@ -14,6 +14,7 @@ typedef struct rv_parser {
 
 rv_parser* rv_parser_new(const char* src);
 void rv_parser_free(rv_parser* parser);
+bool rv_parser_has_more(rv_parser* parser);
 rv_obj* rv_parse(rv_parser* parser);
 
 #endif

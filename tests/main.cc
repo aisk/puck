@@ -5,6 +5,7 @@
 #include "test_object.cc"
 #include "test_parser.cc"
 #include "test_env.cc"
+#include "test_eval.cc"
 
 int main(int argc, char* argv[]) {
     rv_state* state = rv_state_new();

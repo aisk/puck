@@ -71,6 +71,13 @@ rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func) {
     return obj;
 }
 
+rv_obj* rv_function_new(rv_obj* params, rv_obj* body) {
+    rv_obj* obj = rv_obj_alloc(RV_TYPE_FUNCTION);
+    obj->function_v.params = params;
+    obj->function_v.body = body;
+    return obj;
+}
+
 rv_obj* rv_pair_get_car(rv_obj* pair) {
     assert(pair->t == RV_TYPE_PAIR);
     return pair->pair_v.car;
@@ -136,6 +143,8 @@ char* rv_obj_to_string(const rv_obj* obj) {
         return rv_strdup("()");
     case RV_TYPE_CFUNC:
         return rv_strdup("<cfunc>");
+    case RV_TYPE_FUNCTION:
+        return rv_strdup("<function>");
     default:
         return rv_strdup("<object>");
     }
@@ -175,6 +184,8 @@ bool rv_obj_equal(const rv_obj* a, const rv_obj* b) {
         return true;
     case RV_TYPE_CFUNC:
         return a->cfunc_v == b->cfunc_v;
+    case RV_TYPE_FUNCTION:
+        return a == b;
     default:
         return false;
     }

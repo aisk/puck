@@ -17,17 +17,25 @@ typedef enum {
     RV_TYPE_VECTOR,
     RV_TYPE_NIL,
     RV_TYPE_CFUNC,
+    RV_TYPE_FUNCTION,
 } rv_type;
 
 struct rv_pair;
 struct rv_obj;
+struct rv_function;
 typedef struct rv_pair rv_pair;
 typedef struct rv_obj rv_obj;
+typedef struct rv_function rv_function;
 typedef rv_obj* (*rv_cfunc)(rv_obj*);
 
 struct rv_pair {
     rv_obj* car;
     rv_obj* cdr;
+};
+
+struct rv_function {
+    rv_obj* params;
+    rv_obj* body;
 };
 
 struct rv_obj {
@@ -39,6 +47,7 @@ struct rv_obj {
         char* string_v;
         rv_pair pair_v;
         rv_cfunc cfunc_v;
+        rv_function function_v;
     };
 };
 
@@ -50,6 +59,7 @@ rv_obj* rv_string_new(const char* v);
 rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr);
 rv_obj* rv_nil_new();
 rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func);
+rv_obj* rv_function_new(rv_obj* params, rv_obj* body);
 
 rv_obj* rv_pair_get_car(rv_obj* obj);
 rv_obj* rv_pair_get_cdr(rv_obj* obj);

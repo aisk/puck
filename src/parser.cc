@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "object.h"
 static rv_obj* parse_expr(rv_parser* parser);
+static void skip_all(rv_parser* parser);
 
 rv_parser* rv_parser_new(const char* src) {
     rv_parser* parser;
@@ -73,6 +74,11 @@ static void skip_all(rv_parser* parser) {
             break;
         }
     }
+}
+
+bool rv_parser_has_more(rv_parser* parser) {
+    skip_all(parser);
+    return have_more(parser);
 }
 
 static rv_obj* parse_list(rv_parser* parser) {
@@ -216,9 +222,7 @@ static rv_obj* parse_expr(rv_parser* parser) {
         return parse_list(parser);
     case '+':
     case '-':
-        if (!isdigit(peak(parser, 1))) {
-            break;
-        }
+        return isdigit(peak(parser, 1)) ? parse_number(parser) : parse_symbol(parser);
     case '0':
     case '1':
     case '2':
