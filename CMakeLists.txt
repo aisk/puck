@@ -29,7 +29,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(run_test "tests/main.cc")
+add_executable(run_test
+    "tests/main.cc"
+    "tests/test_env.cc"
+    "tests/test_eval.cc"
+    "tests/test_object.cc"
+    "tests/test_parser.cc"
+)
 target_compile_options(run_test PRIVATE -Wall -Wextra)
 target_link_libraries(run_test PRIVATE puck_core Catch2::Catch2)
 
