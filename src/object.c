@@ -58,12 +58,6 @@ rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr) {
     return obj;
 }
 
-rv_obj* rv_nil_new(void) {
-    rv_obj* obj = rv_obj_alloc(RV_TYPE_NIL);
-    obj->integer_v = 0;
-    return obj;
-}
-
 rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func) {
     (void)func_name;
     rv_obj* obj = rv_obj_alloc(RV_TYPE_CFUNC);
@@ -139,8 +133,6 @@ char* rv_obj_to_string(const rv_obj* obj) {
         free(cdr);
         return result;
     }
-    case RV_TYPE_NIL:
-        return rv_strdup("()");
     case RV_TYPE_CFUNC:
         return rv_strdup("<cfunc>");
     case RV_TYPE_FUNCTION:
@@ -180,8 +172,6 @@ bool rv_obj_equal(const rv_obj* a, const rv_obj* b) {
     case RV_TYPE_PAIR:
         return rv_nullable_equal(a->pair_v.car, b->pair_v.car) &&
                rv_nullable_equal(a->pair_v.cdr, b->pair_v.cdr);
-    case RV_TYPE_NIL:
-        return true;
     case RV_TYPE_CFUNC:
         return a->cfunc_v == b->cfunc_v;
     case RV_TYPE_FUNCTION:

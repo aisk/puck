@@ -9,17 +9,12 @@ extern "C" {
 #endif
 
 typedef enum {
-    RV_TYPE_NUMBER = 0,
-    RV_TYPE_INTEGER,
+    RV_TYPE_INTEGER = 0,
     RV_TYPE_REAL,
     RV_TYPE_BOOL,
     RV_TYPE_PAIR,
-    RV_TYPE_LIST,
     RV_TYPE_SYMBOL,
-    RV_TYPE_CHAR,
     RV_TYPE_STRING,
-    RV_TYPE_VECTOR,
-    RV_TYPE_NIL,
     RV_TYPE_CFUNC,
     RV_TYPE_FUNCTION,
 } rv_type;
@@ -61,7 +56,6 @@ rv_obj* rv_bool_new(bool v);
 rv_obj* rv_symbol_new(const char* v);
 rv_obj* rv_string_new(const char* v);
 rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr);
-rv_obj* rv_nil_new(void);
 rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func);
 rv_obj* rv_function_new(rv_obj* params, rv_obj* body);
 
