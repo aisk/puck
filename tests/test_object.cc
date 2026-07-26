@@ -2,7 +2,7 @@
 #include <string.h>
 #include <memory>
 #include "../src/object.h"
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 
 using namespace puck;
 

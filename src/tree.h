@@ -32,6 +32,11 @@
 
 #include <sys/cdefs.h>
 
+/* __unused is provided by BSD's sys/cdefs.h, but not by glibc. */
+#ifndef __unused
+#define __unused __attribute__((__unused__))
+#endif
+
 /*
  * This file defines data structures for different types of trees:
  * splay trees and red-black trees.

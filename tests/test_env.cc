@@ -1,5 +1,5 @@
 #include <iostream>
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include "../src/env.h"
 #include "../src/object.h"
 
