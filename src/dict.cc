@@ -25,6 +25,16 @@ rv_dict* rv_dict_new() {
     return head;
 }
 
+void rv_dict_free(rv_dict* dict) {
+    rv_dict_node* node;
+    rv_dict_node* next;
+    RB_FOREACH_SAFE(node, rv_dict, dict, next) {
+        RB_REMOVE(rv_dict, dict, node);
+        free(node);
+    }
+    free(dict);
+}
+
 void rv_dict_set(rv_dict* dict, rv_obj* key, rv_obj* value) {
     rv_dict_node match_node;
     match_node.key = key;

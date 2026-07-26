@@ -7,12 +7,13 @@
 #include "object.h"
 
 typedef struct rv_parser {
-    char* src;
+    const char* src;
     size_t pos;
     size_t line;
 } rv_parser;
 
-rv_parser* rv_parser_new(char* src);
+rv_parser* rv_parser_new(const char* src);
+void rv_parser_free(rv_parser* parser);
 rv_obj* rv_parse(rv_parser* parser);
 
 #endif

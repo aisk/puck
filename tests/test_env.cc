@@ -4,7 +4,7 @@
 #include "../src/env.h"
 
 static rv_obj* symbol(const char* value) {
-    return rv_symbol_new(strdup(value));
+    return rv_symbol_new(value);
 }
 
 TEST_CASE("simple env set", "[env]") {
@@ -13,6 +13,7 @@ TEST_CASE("simple env set", "[env]") {
     rv_env_set(env, symbol("foo"), value);
     REQUIRE(rv_env_get(env, symbol("foo")) == value);
     REQUIRE(rv_env_get(env, symbol("bar")) == NULL);
+    rv_env_free(env);
 }
 
 TEST_CASE("outer env set", "[env]") {
@@ -26,4 +27,6 @@ TEST_CASE("outer env set", "[env]") {
 
     rv_env_set(env, symbol("foo"), inner_value);
     REQUIRE(rv_env_get(env, symbol("foo")) == inner_value);
+    rv_env_free(env);
+    rv_env_free(outer);
 }

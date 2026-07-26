@@ -45,11 +45,11 @@ struct rv_obj {
 rv_obj* rv_integer_new(int v);
 rv_obj* rv_real_new(double v);
 rv_obj* rv_bool_new(bool v);
-rv_obj* rv_symbol_new(char* v);
-rv_obj* rv_string_new(char* v);
+rv_obj* rv_symbol_new(const char* v);
+rv_obj* rv_string_new(const char* v);
 rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr);
 rv_obj* rv_nil_new();
-rv_obj* rv_cfunc_new(char* func_name, rv_cfunc func);
+rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func);
 
 rv_obj* rv_pair_get_car(rv_obj* obj);
 rv_obj* rv_pair_get_cdr(rv_obj* obj);
@@ -57,6 +57,8 @@ rv_obj* rv_pair_set_car(rv_obj* pair, rv_obj* obj);
 rv_obj* rv_pair_set_cdr(rv_obj* pair, rv_obj* obj);
 
 void rv_obj_print(rv_obj* obj);
+char* rv_obj_to_string(const rv_obj* obj);
+bool rv_obj_equal(const rv_obj* a, const rv_obj* b);
 
 void rv_obj_free(rv_obj* obj);
 

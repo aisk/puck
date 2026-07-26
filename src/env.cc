@@ -8,6 +8,14 @@ rv_env* rv_env_new(rv_env* outer) {
     return env;
 }
 
+void rv_env_free(rv_env* env) {
+    if (env == NULL) {
+        return;
+    }
+    rv_dict_free(env->dict);
+    free(env);
+}
+
 void rv_env_set(rv_env* env, rv_obj* key, rv_obj* value) {
     rv_dict_set(env->dict, key, value);
 }

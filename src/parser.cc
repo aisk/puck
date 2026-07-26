@@ -5,13 +5,17 @@
 #include "object.h"
 static rv_obj* parse_expr(rv_parser* parser);
 
-rv_parser* rv_parser_new(char* src) {
+rv_parser* rv_parser_new(const char* src) {
     rv_parser* parser;
     parser = (rv_parser*) malloc(sizeof(rv_parser));
     parser->src = src;
     parser->pos = 0;
     parser->line = 1;
     return parser;
+}
+
+void rv_parser_free(rv_parser* parser) {
+    free(parser);
 }
 
 static bool have_more(rv_parser* parser) {
@@ -168,7 +172,9 @@ static rv_obj* parse_symbol(rv_parser* parser) {
     char* s = (char*)malloc(sizeof(char) * (n + 1));
     strncpy(s, (parser->src + start_pos), n);
     s[n] = 0;
-    return rv_symbol_new(s);
+    rv_obj* symbol = rv_symbol_new(s);
+    free(s);
+    return symbol;
 }
 
 static rv_obj* parse_string(rv_parser* parser) {
@@ -191,7 +197,9 @@ static rv_obj* parse_string(rv_parser* parser) {
     char* s = (char*)malloc(sizeof(char) * (n + 1));
     strncpy(s, (parser->src + start_pos), n);
     s[n] = 0;
-    return rv_string_new(s);
+    rv_obj* string = rv_string_new(s);
+    free(s);
+    return string;
 }
 
 static rv_obj* parse_expr(rv_parser* parser) {
