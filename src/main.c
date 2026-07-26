@@ -12,6 +12,14 @@ static int run_source(const char* source, rv_env* env, bool print_results) {
     rv_parser* parser = rv_parser_new(source);
     while (rv_parser_has_more(parser)) {
         rv_obj* expression = rv_parse(parser);
+        if (expression == NULL) {
+            fprintf(stderr, "%zu:%zu: %s\n",
+                    rv_parser_error_line(parser),
+                    rv_parser_error_column(parser),
+                    rv_parser_error(parser));
+            rv_parser_free(parser);
+            return 1;
+        }
         rv_obj* result = rv_eval(expression, env);
         if (result == NULL) {
             rv_parser_free(parser);

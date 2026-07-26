@@ -58,3 +58,27 @@ TEST_CASE("parse string", "[parser]") {
     REQUIRE(obj->t == RV_TYPE_STRING);
     REQUIRE(strcmp(obj->string_v, "hello world!") == 0);
 }
+
+TEST_CASE("parse string escapes", "[parser]") {
+    rv_obj* obj = parse("\"hello\\nworld\\t\\\"ok\\\"\"");
+    REQUIRE(strcmp(obj->string_v, "hello\nworld\t\"ok\"") == 0);
+}
+
+TEST_CASE("parser reports malformed input", "[parser]") {
+    rv_parser* parser = rv_parser_new("(1 2\n 3");
+    REQUIRE(rv_parse(parser) == NULL);
+    REQUIRE(strcmp(rv_parser_error(parser), "expected ')' to close list") == 0);
+    REQUIRE(rv_parser_error_line(parser) == 2);
+    REQUIRE(rv_parser_error_column(parser) == 3);
+    rv_parser_free(parser);
+
+    parser = rv_parser_new(")");
+    REQUIRE(rv_parse(parser) == NULL);
+    REQUIRE(strcmp(rv_parser_error(parser), "unexpected ')'") == 0);
+    rv_parser_free(parser);
+
+    parser = rv_parser_new("#x");
+    REQUIRE(rv_parse(parser) == NULL);
+    REQUIRE(strcmp(rv_parser_error(parser), "expected '#t' or '#f'") == 0);
+    rv_parser_free(parser);
+}

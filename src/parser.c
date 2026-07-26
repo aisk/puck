@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include <string.h>
-#include <assert.h>
+#include <stdarg.h>
 #include "parser.h"
 #include "object.h"
 static rv_obj* parse_expr(rv_parser* parser);
@@ -10,8 +10,12 @@ rv_parser* rv_parser_new(const char* src) {
     rv_parser* parser;
     parser = (rv_parser*) malloc(sizeof(rv_parser));
     parser->src = src;
+    parser->length = strlen(src);
     parser->pos = 0;
     parser->line = 1;
+    parser->error_line = 0;
+    parser->error_column = 0;
+    parser->error[0] = 0;
     return parser;
 }
 
@@ -20,7 +24,7 @@ void rv_parser_free(rv_parser* parser) {
 }
 
 static bool have_more(rv_parser* parser) {
-    return parser->pos < strlen(parser->src);
+    return parser->pos < parser->length;
 }
 
 static void pop(rv_parser* parser, size_t n) {
@@ -28,11 +32,29 @@ static void pop(rv_parser* parser, size_t n) {
 }
 
 static char peak(rv_parser* parser, size_t idx) {
-    if (parser->pos + idx < strlen(parser->src)) {
+    if (parser->pos + idx < parser->length) {
         return parser->src[parser->pos + idx];
     } else {
         return 0;
     }
+}
+
+static void set_error(rv_parser* parser, const char* format, ...) {
+    if (parser->error[0] != 0) return;
+    parser->error_line = 1;
+    parser->error_column = 1;
+    for (size_t i = 0; i < parser->pos && i < parser->length; i++) {
+        if (parser->src[i] == '\n') {
+            parser->error_line++;
+            parser->error_column = 1;
+        } else {
+            parser->error_column++;
+        }
+    }
+    va_list args;
+    va_start(args, format);
+    vsnprintf(parser->error, sizeof(parser->error), format, args);
+    va_end(args);
 }
 
 static bool eat(rv_parser* parser, char c) {
@@ -92,16 +114,19 @@ static rv_obj* parse_list(rv_parser* parser) {
         if (eat(parser, ')')) {
             return head;
         }
+        if (!have_more(parser)) {
+            set_error(parser, "expected ')' to close list");
+            return NULL;
+        }
         rv_obj* obj = parse_expr(parser);
-        // rv_pair_set_car(current, obj);
+        if (obj == NULL) return NULL;
         current->pair_v.car = obj;
-        assert(current->pair_v.car == obj);
         rv_obj* nil = rv_pair_new(NULL, NULL);
-        // rv_pair_set_cdr(current, nil);
         current->pair_v.cdr = nil;
         current = nil;
     }
-    return head;
+    set_error(parser, "expected ')' to close list");
+    return NULL;
 }
 
 static rv_obj* parse_bool(rv_parser* parser) {
@@ -112,10 +137,9 @@ static rv_obj* parse_bool(rv_parser* parser) {
         pop(parser, 2);
         return rv_bool_new(false);
     } else {
-        puts("parse bool error");
-        exit(1);
+        set_error(parser, "expected '#t' or '#f'");
+        return NULL;
     }
-    return NULL;
 }
 
 static rv_obj* parse_number(rv_parser* parser) {
@@ -138,7 +162,8 @@ static rv_obj* parse_number(rv_parser* parser) {
     }
     size_t end_pos = parser->pos;
     if (start_pos == end_pos) {
-        puts("Not enough number to parse");
+        set_error(parser, "invalid number");
+        return NULL;
     }
     if (is_real) {
         double v = atof(parser->src + start_pos) * sign;
@@ -185,23 +210,34 @@ static rv_obj* parse_symbol(rv_parser* parser) {
 
 static rv_obj* parse_string(rv_parser* parser) {
     eat(parser, '"');
-    size_t start_pos;
+    char* s = (char*)malloc(parser->length - parser->pos + 1);
     size_t n = 0;
-    start_pos = parser->pos;
-    while (true) {
-        if (!have_more(parser))
-            break;
-        if (peak(parser, 0) == '"')
-            break;
+    while (have_more(parser) && peak(parser, 0) != '"') {
+        char c = peak(parser, 0);
         pop(parser, 1);
-        n++;
+        if (c == '\\') {
+            if (!have_more(parser)) {
+                free(s);
+                set_error(parser, "unfinished string escape");
+                return NULL;
+            }
+            c = peak(parser, 0);
+            pop(parser, 1);
+            if (c == 'n') c = '\n';
+            else if (c == 't') c = '\t';
+            else if (c != '\\' && c != '"') {
+                free(s);
+                set_error(parser, "unsupported string escape");
+                return NULL;
+            }
+        }
+        s[n++] = c;
     }
     if (!eat(parser, '"')) {
-        puts("Expecting '\"' to end a string.");
-        exit(1);
+        free(s);
+        set_error(parser, "expected '\"' to close string");
+        return NULL;
     }
-    char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (parser->src + start_pos), n);
     s[n] = 0;
     rv_obj* string = rv_string_new(s);
     free(s);
@@ -211,8 +247,8 @@ static rv_obj* parse_string(rv_parser* parser) {
 static rv_obj* parse_expr(rv_parser* parser) {
     skip_all(parser);
     if (!have_more(parser)) {
-        puts("Nothing to parse.");
-        exit(1);
+        set_error(parser, "expected an expression");
+        return NULL;
     }
     char c = peak(parser, 0);
     switch(c) {
@@ -236,10 +272,26 @@ static rv_obj* parse_expr(rv_parser* parser) {
         return parse_number(parser);
     case '"':
         return parse_string(parser);
+    case ')':
+        set_error(parser, "unexpected ')'");
+        return NULL;
     }
     return parse_symbol(parser);
 }
 
 rv_obj* rv_parse(rv_parser* parser) {
+    if (parser == NULL || parser->error[0] != 0) return NULL;
     return parse_expr(parser);
+}
+
+const char* rv_parser_error(const rv_parser* parser) {
+    return parser == NULL ? "invalid parser" : parser->error;
+}
+
+size_t rv_parser_error_line(const rv_parser* parser) {
+    return parser == NULL ? 0 : parser->error_line;
+}
+
+size_t rv_parser_error_column(const rv_parser* parser) {
+    return parser == NULL ? 0 : parser->error_column;
 }
