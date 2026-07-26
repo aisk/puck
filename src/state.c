@@ -15,7 +15,7 @@ struct rv_state {
 
 static rv_state* current_state = NULL;
 
-rv_state* rv_state_new() {
+rv_state* rv_state_new(void) {
     rv_state* state = (rv_state*)calloc(1, sizeof(rv_state));
     return state;
 }
@@ -24,7 +24,7 @@ void rv_state_set_current(rv_state* state) {
     current_state = state;
 }
 
-rv_state* rv_state_current() {
+rv_state* rv_state_current(void) {
     return current_state;
 }
 

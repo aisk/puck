@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     RV_TYPE_NUMBER = 0,
     RV_TYPE_INTEGER,
@@ -57,7 +61,7 @@ rv_obj* rv_bool_new(bool v);
 rv_obj* rv_symbol_new(const char* v);
 rv_obj* rv_string_new(const char* v);
 rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr);
-rv_obj* rv_nil_new();
+rv_obj* rv_nil_new(void);
 rv_obj* rv_cfunc_new(const char* func_name, rv_cfunc func);
 rv_obj* rv_function_new(rv_obj* params, rv_obj* body);
 
@@ -73,5 +77,9 @@ bool rv_obj_equal(const rv_obj* a, const rv_obj* b);
 void rv_obj_free(rv_obj* obj);
 
 bool rv_obj_is_nil(rv_obj* obj);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

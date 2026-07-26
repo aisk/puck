@@ -2,6 +2,9 @@
 
 `puck` is a tiny Lisp-style language.
 
+The interpreter core and command-line program are written in C11. The test
+suite uses C++ only because it is built with Catch2.
+
 It has numbers, booleans, strings and lists, plus variables, functions,
 conditionals and a small standard environment. It intentionally does not aim
 to implement Scheme.

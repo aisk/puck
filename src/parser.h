@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include "object.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct rv_parser {
     const char* src;
     size_t pos;
@@ -16,5 +20,9 @@ rv_parser* rv_parser_new(const char* src);
 void rv_parser_free(rv_parser* parser);
 bool rv_parser_has_more(rv_parser* parser);
 rv_obj* rv_parse(rv_parser* parser);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

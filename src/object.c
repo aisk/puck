@@ -58,7 +58,7 @@ rv_obj* rv_pair_new(rv_obj* car, rv_obj* cdr) {
     return obj;
 }
 
-rv_obj* rv_nil_new() {
+rv_obj* rv_nil_new(void) {
     rv_obj* obj = rv_obj_alloc(RV_TYPE_NIL);
     obj->integer_v = 0;
     return obj;

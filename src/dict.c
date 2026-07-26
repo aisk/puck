@@ -11,9 +11,9 @@ static int rv_dict_node_comp(rv_dict_node* node_a, rv_dict_node* node_b) {
 }
 
 RB_HEAD(rv_dict, rv_dict_node);
-RB_GENERATE_STATIC(rv_dict, rv_dict_node, entry, rv_dict_node_comp);
+RB_GENERATE_STATIC(rv_dict, rv_dict_node, entry, rv_dict_node_comp)
 
-rv_dict* rv_dict_new() {
+rv_dict* rv_dict_new(void) {
     rv_dict* head = (rv_dict*)malloc(sizeof(rv_dict));
     RB_INIT(head);
 
