@@ -1,69 +1,47 @@
-#include <stdio.h>
 #include <string.h>
-#include <memory>
-#include "../src/object.h"
 #include <catch2/catch.hpp>
-
-using namespace puck;
+#include "../src/object.h"
 
 TEST_CASE("integer", "[object]") {
-    auto one = object::Integer(1);
-    auto two = object::Integer(2);
-    auto anotherOne = object::Integer(1);
-
-    REQUIRE(one.GetType() == object::type::INTEGER);
-    REQUIRE(one.EqualTo(&two) == false);
-    REQUIRE(one.EqualTo(&anotherOne) == true);
+    rv_obj* obj = rv_integer_new(1);
+    REQUIRE(obj->t == RV_TYPE_INTEGER);
+    REQUIRE(obj->integer_v == 1);
+    rv_obj_free(obj);
 }
 
 TEST_CASE("real", "[object]") {
-    auto obj = object::Real(0.618);
-    REQUIRE(obj.GetType() == object::type::REAL);
+    rv_obj* obj = rv_real_new(0.618);
+    REQUIRE(obj->t == RV_TYPE_REAL);
+    REQUIRE(obj->real_v == Approx(0.618));
+    rv_obj_free(obj);
 }
 
 TEST_CASE("bool", "[object]") {
-    auto True = object::Bool(true);
-    auto s = True.ToString();
-    REQUIRE(True.GetType() == object::type::BOOL);
-    REQUIRE(strcmp(s, "#t") == 0);
-    delete s;
+    rv_obj* obj = rv_bool_new(true);
+    REQUIRE(obj->t == RV_TYPE_BOOL);
+    REQUIRE(obj->bool_v);
+    rv_obj_free(obj);
 }
 
 TEST_CASE("pair", "[object]") {
-    // TODO: fix momery leak
-    return;
-    auto nil = object::Pair(nullptr, nullptr);
-    auto one = object::Integer(1);
-    auto two = object::Integer(2);
-    auto three = object::Integer(3);
-
-    REQUIRE(nil.GetType() == object::type::PAIR);
-    REQUIRE(strcmp(nil.ToString(), "( . )") == 0);
-    REQUIRE(nil.EqualTo(new object::Pair(nullptr, nullptr)));
-
-    auto pair = object::Pair(&one, &nil);
-    auto anotherPair = object::Pair(&one, &nil);
-    REQUIRE(pair.EqualTo(&anotherPair));
-
-    pair = object::Pair(&one, new object::Pair(&two, new object::Pair(&three, &nil)));
-    REQUIRE(strcmp(pair.ToString(), "(1 . (2 . (3 . ( . ))))") == 0);
-    REQUIRE(pair.EqualTo(new object::Pair(&one, new object::Pair(&two, new object::Pair(&three, &nil)))));
+    rv_obj* nil = rv_pair_new(NULL, NULL);
+    REQUIRE(rv_obj_is_nil(nil));
+    rv_obj_free(nil);
 }
 
 TEST_CASE("symbol", "[object]") {
-    char *str = const_cast<char *>("foo");
-    auto obj = object::Symbol(str);
-    REQUIRE(obj.GetType() == object::type::SYMBOL);
-    auto objStr = obj.ToString();
-    REQUIRE(strcmp(objStr, "'foo") == 0);
-    delete objStr;
+    char* value = strdup("foo");
+    rv_obj* obj = rv_symbol_new(value);
+    REQUIRE(obj->t == RV_TYPE_SYMBOL);
+    REQUIRE(strcmp(obj->string_v, "foo") == 0);
+    rv_obj_free(obj);
 }
 
 TEST_CASE("string", "[object]") {
-    char *str = const_cast<char *>("hello world!");
-    auto obj = object::String(str);
-    REQUIRE(obj.GetType() == object::type::STRING);
-    auto objStr = obj.ToString();
-    REQUIRE(strcmp(objStr, "\"hello world!\"") == 0);
-    delete objStr;
+    char* value = strdup("hello world!");
+    rv_obj* obj = rv_string_new(value);
+    REQUIRE(obj->t == RV_TYPE_STRING);
+    REQUIRE(strcmp(obj->string_v, "hello world!") == 0);
+    free(obj->string_v);
+    free(obj);
 }

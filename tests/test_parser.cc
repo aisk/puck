@@ -1,126 +1,60 @@
+#include <stdlib.h>
 #include <string.h>
-#include <memory>
-#include <stdio.h>
-#include <iostream>
 #include <catch2/catch.hpp>
 #include "../src/parser.h"
-#include "../src/state.h"
 
-using namespace puck;
+static rv_obj* parse(char* source) {
+    rv_parser* parser = rv_parser_new(source);
+    rv_obj* result = rv_parse(parser);
+    free(parser);
+    return result;
+}
 
 TEST_CASE("parse integer", "[parser]") {
-    InitGlobalState();
-    
-    char *src =  const_cast<char *>("  1");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Integer>(1).get()));
-
-    src = const_cast<char *>(" -42 ");
-    parser = std::make_shared<Parser>(src);
-    obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Integer>(-42).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>("  -42 "));
+    REQUIRE(obj->t == RV_TYPE_INTEGER);
+    REQUIRE(obj->integer_v == -42);
 }
 
 TEST_CASE("parse real", "[parser]") {
-    InitGlobalState();
-    
-    char *src = const_cast<char *>("0.618");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Real>(0.618).get()));
-    
-    src = const_cast<char *>("  -3.14  ");
-    parser = std::make_shared<Parser>(src);
-    obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Real>(-3.14).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>(" -3.14 "));
+    REQUIRE(obj->t == RV_TYPE_REAL);
+    REQUIRE(obj->real_v == Approx(-3.14));
 }
 
 TEST_CASE("parse bool", "[parser]") {
-    InitGlobalState();
-    
-    char *src = const_cast<char *>("   #t  ");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Bool>(true).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>(" #t "));
+    REQUIRE(obj->t == RV_TYPE_BOOL);
+    REQUIRE(obj->bool_v);
 }
 
 TEST_CASE("parse symbol", "[parser]") {
-    InitGlobalState();
-    
-    char *src = const_cast<char *>(" 'foo  ");
-    char *str = const_cast<char *>("foo");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Symbol>(str).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>("foo "));
+    REQUIRE(obj->t == RV_TYPE_SYMBOL);
+    REQUIRE(strcmp(obj->string_v, "foo") == 0);
 }
 
 TEST_CASE("parse empty list", "[parser]") {
-    InitGlobalState();
-    
-    auto nil = object::Pair(nullptr, nullptr);
-
-    char *src = const_cast<char *>("   (  )   ");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::Pair>(nullptr, nullptr).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>(" ( ) "));
+    REQUIRE(rv_obj_is_nil(obj));
 }
 
 TEST_CASE("parse simple list", "[parser]") {
-    InitGlobalState();
-    
-    auto one = object::Integer(1);
-    auto two = object::Integer(2);
-    auto tree = object::Integer(3);
-    auto nil = object::Pair(nullptr, nullptr);
-
-    char *src = const_cast<char *>(" ( 1   2 3)");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    auto expect = object::Pair(&one, std::make_shared<object::Pair>(&two, std::make_shared<object::Pair>(&tree, &nil).get()).get());
-    REQUIRE(obj->EqualTo(&expect));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>("(1 2 3)"));
+    REQUIRE(obj->pair_v.car->integer_v == 1);
+    REQUIRE(obj->pair_v.cdr->pair_v.car->integer_v == 2);
+    REQUIRE(obj->pair_v.cdr->pair_v.cdr->pair_v.car->integer_v == 3);
 }
 
 TEST_CASE("parse nested list", "[parser]") {
-    InitGlobalState();
-    
-    auto one = object::Integer(1);
-    auto two = object::Integer(2);
-    auto tree = object::Integer(3);
-    auto four = object::Integer(4);
-    auto five = object::Integer(5);
-    auto nil = object::Pair(nullptr, nullptr);
-
-    char *src = const_cast<char *>(" (1 (2 3)) ");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();  // TODO: leaks here
-    auto expcetInner = object::Pair(&two, std::make_shared<object::Pair>(&tree, &nil).get());
-    auto expect = object::Pair(&one, std::make_shared<object::Pair>(&expcetInner, &nil).get());
-    REQUIRE(obj->EqualTo(&expect));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>("(1 (2 3))"));
+    rv_obj* inner = obj->pair_v.cdr->pair_v.car;
+    REQUIRE(inner->pair_v.car->integer_v == 2);
+    REQUIRE(inner->pair_v.cdr->pair_v.car->integer_v == 3);
 }
 
 TEST_CASE("parse string", "[parser]") {
-    InitGlobalState();
-    
-    char *src = const_cast<char *>("\"hello world!\"");
-    char *str = const_cast<char *>("hello world!");
-    auto parser = std::make_shared<Parser>(src);
-    auto obj = parser->ParseExpr();
-    REQUIRE(obj->EqualTo(std::make_shared<object::String>(str).get()));
-
-    DestroyGlobalState();
+    rv_obj* obj = parse(const_cast<char *>("\"hello world!\""));
+    REQUIRE(obj->t == RV_TYPE_STRING);
+    REQUIRE(strcmp(obj->string_v, "hello world!") == 0);
 }

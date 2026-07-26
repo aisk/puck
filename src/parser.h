@@ -6,29 +6,6 @@
 #include <stdio.h>
 #include "object.h"
 
-namespace puck {
-class Parser {
-    char* src;
-    size_t pos;
-    size_t line;
-    bool HaveMore();
-    void Pop(size_t);
-    char Peek(size_t);
-    bool Eat(char);
-    void SkipWhite();
-    void SkipComment();
-    void SkipAll();
-    object::Object *ParseNumber();
-    object::Object *ParseList();
-    object::Object *ParseBool();
-    object::Object *ParseString();
-    object::Object *ParseSymbol();
-public:
-    object::Object *ParseExpr();
-    Parser(char*);
-};
-} // namespace rv
-
 typedef struct rv_parser {
     char* src;
     size_t pos;

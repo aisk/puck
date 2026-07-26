@@ -3,237 +3,6 @@
 #include <assert.h>
 #include "parser.h"
 #include "object.h"
-#include "state.h"
-
-using namespace puck;
-
-Parser::Parser(char *src) {
-    this->pos = 0;
-    this->line = 0;
-    this->src = src;
-}
-
-bool Parser::HaveMore() {
-    return this->pos < strlen(this->src);
-}
-
-void Parser::Pop(size_t n) {
-    this->pos += n;
-}
-
-char Parser::Peek(size_t idx) {
-    if (this->pos + idx < strlen(this->src)) {
-        return this->src[this->pos + idx];
-    } else {
-        return -1;
-    }
-}
-
-void Parser::SkipWhite() {
-    while (this->HaveMore()) {
-        if (this->Eat('\n')) {
-            this->line ++;
-        } else if (isspace(this->Peek(0))) {
-            this->Pop(1);
-        } else {
-            break;
-        }
-    }
-}
-
-bool Parser::Eat(char c) {
-    if (this->Peek(0) != c) {
-        return false;
-    } else {
-        this->pos ++;
-        return true;
-    }
-}
-
-void Parser::SkipComment() {
-    while (this->Eat(';')) {
-        while (this->HaveMore() && !this->Eat('\n')) {
-            this->Pop(1);
-        }
-        this->line += 1;
-    }
-}
-
-void Parser::SkipAll() {
-    while (true) {
-        this->SkipWhite();
-        if (this->Peek(0) == ';') {
-            this->SkipComment();
-        } else {
-            break;
-        }
-    }
-}
-
-object::Object *Parser::ParseExpr() {
-    this->SkipAll();
-    if (!this->HaveMore()) {
-        fprintf(stderr, "Nothing to parse.\n");
-        exit(1);
-    }
-    char c = this->Peek(0);
-    switch(c) {
-    case '#':
-        return this->ParseBool();
-    case '(':
-        return this->ParseList();
-    case '+':
-    case '-':
-        if (!isdigit(this->Peek(1))) {
-            break;
-        }
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        return this->ParseNumber();
-    case '"':
-        return this->ParseString();
-    }
-    return this->ParseSymbol();
-}
-
-
-object::Object *Parser::ParseNumber() {
-    int sign = 1;
-    bool is_real = false;
-    if (this->Eat('-')) {
-        sign = -1;
-    } else if (this->Eat('+')) {
-        sign = 1;
-    }
-    size_t start_pos = this->pos;
-    while (isdigit(this->Peek(0))) {
-        this->Pop(1);
-    }
-    if (this->Eat('.')) {
-        is_real = true;
-    }
-    while (isdigit(this->Peek(0))) {
-        this->Pop(1);
-    }
-    size_t end_pos = this->pos;
-    if (start_pos == end_pos) {
-        puts("Not enough number to parse");
-    }
-    if (is_real) {
-        double value = atof(this->src + start_pos);
-        value *= sign;
-        return gstate->allocate<object::Real>(value);
-    } else {
-        long value = atoi(this->src + start_pos);
-        value *= sign;
-        return gstate->allocate<object::Integer>(value);
-    }
-}
-
-object::Object *Parser::ParseList() {
-    object::Pair *head;
-    object::Pair *current;
-    head = gstate->allocate<object::Pair>(nullptr, nullptr);
-    current = head;
-    this->Eat('(');
-    while (this->HaveMore()) {
-        this->SkipAll();
-        if (this->Eat(')')) {
-            return head;
-        }
-        auto obj = this->ParseExpr();
-        current->SetCar(obj);
-        auto nil = gstate->allocate<object::Pair>(nullptr, nullptr);
-        current->SetCdr(nil);
-        current = nil;
-    }
-    return head;
-}
-
-object::Object *Parser::ParseBool() {
-    if (this->Peek(1) == 't') {
-        this->Pop(2);
-        return gstate->allocate<object::Bool>(true);
-    } else if (this->Peek(1) == 'f') {
-        this->Pop(2);
-        return gstate->allocate<object::Bool>(false);
-    } else {
-        puts("parse bool error");
-        exit(1);
-    }
-    return NULL; // TODO
-}
-
-object::Object *Parser::ParseString() {
-    this->Eat('"');
-    size_t start_pos;
-    size_t n = 0;
-    start_pos = this->pos;
-    while (true) {
-        if (!this->HaveMore())
-            break;
-        if (this->Peek(0) == '"')
-            break;
-        this->Pop(1);
-        n++;
-    }
-    if (!this->Eat('"')) {
-        puts("Expecting '\"' to end a string.");
-        exit(1);
-    }
-    char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
-    strncpy(s, (this->src + start_pos), n);
-    s[n] = 0;
-    auto str = gstate->allocate<object::String>(s);
-    delete s;
-    return str;
-}
-
-object::Object *Parser::ParseSymbol() {
-    this->Eat('\'');
-    size_t start_pos;
-    size_t n = 1;
-    bool stop = false;
-    start_pos = this->pos;
-    this->Pop(1);
-    while (true) {
-        if (!this->HaveMore()) {
-            break;
-        }
-        if (isspace(this->Peek(0))) {
-            break;
-        }
-        switch (this->Peek(0)) {
-            case '\'':
-            case '(':
-            case ')':
-            case ',':
-            case '@':
-                stop = true;
-                break;
-        }
-        // FIXME: not elegant
-        if (stop)
-            break;
-        this->Pop(1);
-        n++;
-    }
-    char* s = static_cast<char *>(malloc(sizeof(char) * (n + 1)));
-    strncpy(s, (this->src + start_pos), n);
-    s[n] = 0;
-    auto symbol = gstate->allocate<object::Symbol>(s);
-    delete s;
-    return symbol;
-}
-
 static rv_obj* parse_expr(rv_parser* parser);
 
 rv_parser* rv_parser_new(char* src) {
@@ -362,10 +131,10 @@ static rv_obj* parse_number(rv_parser* parser) {
         puts("Not enough number to parse");
     }
     if (is_real) {
-        double v = atof(parser->src + start_pos);
+        double v = atof(parser->src + start_pos) * sign;
         return rv_real_new(v);
     } else {
-        int v = atoi(parser->src + start_pos);
+        int v = atoi(parser->src + start_pos) * sign;
         return rv_integer_new(v);
     }
 }
@@ -397,7 +166,8 @@ static rv_obj* parse_symbol(rv_parser* parser) {
         n++;
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (parser->src + start_pos), n + 1);
+    strncpy(s, (parser->src + start_pos), n);
+    s[n] = 0;
     return rv_symbol_new(s);
 }
 
@@ -419,7 +189,8 @@ static rv_obj* parse_string(rv_parser* parser) {
         exit(1);
     }
     char* s = (char*)malloc(sizeof(char) * (n + 1));
-    strncpy(s, (parser->src + start_pos), n + 1);
+    strncpy(s, (parser->src + start_pos), n);
+    s[n] = 0;
     return rv_string_new(s);
 }
 

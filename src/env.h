@@ -1,22 +1,7 @@
 #ifndef PUCK_ENV_H
 #define PUCK_ENV_H
 
-#include <map>
 #include "dict.h"
-
-namespace puck {
-class Env {
-    std::map<object::Object *, object::Object *> store;
-    Env *outer;
-public:
-    Env();
-    Env(Env &);
-    inline Env *GetOuter() { return outer; };
-    object::Object *Get(object::Object &key);
-    void Set(object::Object &key, object::Object &value);
-};
-
-} // namespace puck
 
 struct rv_env;
 typedef struct rv_env rv_env;
